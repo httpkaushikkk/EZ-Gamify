@@ -2,6 +2,7 @@
 const nextConfig = {
   images: {
     domains: ["192.168.29.43"],
+    unoptimized: true,
   },
 };
 
