@@ -53,13 +53,13 @@ const Login: React.FC<LoginInterface> = () => {
 
   return (
     <React.Fragment>
-      {/* <Image
+      <Image
         src={background}
         alt="poster"
         className="w-screen h-screen object-cover"
-      /> */}
-      {/* <div className="w-screen h-screen object-cover bg-black/10 absolute top-0" /> */}
-      <div className="absolute h-screen top-0 right-0 left-0 bottom-0 flex flex-col justify-center py-12 sm:px-10 lg:px-8 mx-5 bg-black">
+      />
+      <div className="w-screen h-screen object-cover bg-black/10 absolute top-0" />
+      <div className="absolute h-screen top-0 right-0 left-0 bottom-0 flex flex-col justify-center py-12 sm:px-10 lg:px-8 mx-5">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="border-[1px] border-white/50 sm:rounded-lg sm:px-10 p-5">
             <div className="sm:mx-auto sm:w-full sm:max-w-md pb-8">
