@@ -1,7 +1,6 @@
 "use client";
 import * as Yup from "yup";
 import Link from "next/link";
-import Image from "next/image";
 import { useFormik } from "formik";
 import toast from "react-hot-toast";
 import api from "@/app/helper/axios";
@@ -88,7 +87,7 @@ const Register: React.FC<RegisterInterface> = () => {
 
   return (
     <React.Fragment>
-      <Image
+      <img
         src={background}
         alt="poster"
         className="w-screen h-screen object-cover"
