@@ -8,6 +8,7 @@ import api from "@/app/helper/axios";
 import { setCookie } from "cookies-next";
 import background from "../../assets/svg/background.svg";
 import CircularProgress from "@mui/material/CircularProgress";
+import Image from "next/image";
 
 interface LoginInterface {}
 
@@ -52,7 +53,7 @@ const Login: React.FC<LoginInterface> = () => {
 
   return (
     <React.Fragment>
-      <img
+      <Image
         src={background}
         alt="poster"
         className="w-screen h-screen object-cover"

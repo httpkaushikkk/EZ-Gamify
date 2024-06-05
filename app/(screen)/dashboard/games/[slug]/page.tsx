@@ -54,7 +54,9 @@ const View = ({ params }: { params: { slug: string[] } }) => {
         ", top=" +
         top
     );
-    newWindow.location.href = imageURL + url;
+    newWindow.location.href = url;
+    console.log(url);
+    
   };
 
   const prevSlide = () => {
@@ -90,8 +92,7 @@ const View = ({ params }: { params: { slug: string[] } }) => {
         <div
           style={{
             backgroundImage: `url(${
-              imageURL +
-              (game.poster &&
+              game.poster &&
               Array.isArray(game.poster) &&
               game.poster.length > 0
                 ? game.poster[
@@ -101,7 +102,7 @@ const View = ({ params }: { params: { slug: string[] } }) => {
                       ? currentIndex
                       : 0
                   ].path
-                : "")
+                : ""
             })`,
           }}
           className="w-full h-full rounded-2xl bg-center bg-cover duration-500"

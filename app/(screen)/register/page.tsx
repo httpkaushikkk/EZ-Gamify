@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { setCookie } from "cookies-next";
 import background from "../../assets/svg/background.svg";
 import CircularProgress from "@mui/material/CircularProgress";
+import Image from "next/image";
 
 interface RegisterInterface {}
 
@@ -87,7 +88,7 @@ const Register: React.FC<RegisterInterface> = () => {
 
   return (
     <React.Fragment>
-      <img
+      <Image
         src={background}
         alt="poster"
         className="w-screen h-screen object-cover"
