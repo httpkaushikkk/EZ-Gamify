@@ -54,9 +54,8 @@ const View = ({ params }: { params: { slug: string[] } }) => {
         ", top=" +
         top
     );
-    newWindow.location.href = url;
+    newWindow.location.href = imageURL + url;
     console.log(url);
-    
   };
 
   const prevSlide = () => {
@@ -95,7 +94,8 @@ const View = ({ params }: { params: { slug: string[] } }) => {
               game.poster &&
               Array.isArray(game.poster) &&
               game.poster.length > 0
-                ? game.poster[
+                ? imageURL +
+                  game.poster[
                     typeof currentIndex !== "undefined" &&
                     currentIndex >= 0 &&
                     currentIndex < game.poster.length

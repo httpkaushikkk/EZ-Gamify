@@ -94,7 +94,7 @@ const Game: React.FC<GameInterface> = () => {
                     className="rounded-lg overflow-hidden cursor-pointer"
                   >
                     <Image
-                      src={item.game_icon}
+                      src={imageURL + item.game_icon}
                       alt={item.game_icon}
                       className="object-cover"
                       width={200}
@@ -117,7 +117,7 @@ const Game: React.FC<GameInterface> = () => {
                       className="rounded-lg overflow-hidden cursor-pointer border-[1px] border-primary-darken/25"
                     >
                       <Image
-                        src={item.game_icon}
+                        src={imageURL + item.game_icon}
                         alt={item.game_icon}
                         className="object-cover"
                         width={200}

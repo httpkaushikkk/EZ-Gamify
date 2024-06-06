@@ -5,8 +5,8 @@ import { getCookie } from "cookies-next";
 export const imageURL = "http://192.168.29.43:8100/";
 
 // Define your base URL for the API
-// const baseURL = "http://192.168.29.43:8100/v1/api";
-const baseURL = "https://test-z4u3.onrender.com/v1/api";
+const baseURL = "http://192.168.29.43:8100/v1/api";
+// const baseURL = "https://test-z4u3.onrender.com/v1/api";
 
 // Create an Axios instance with common configuration
 const axiosInstance = axios.create({
