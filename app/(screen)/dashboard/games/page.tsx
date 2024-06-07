@@ -47,7 +47,7 @@ const Game: React.FC<GameInterface> = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-primary-extraLight">
+    <div className="w-full h-screen bg-primary-extraLight/15">
       <div className="flex items-center p-5">
         <a
           href={void 0}
@@ -84,49 +84,59 @@ const Game: React.FC<GameInterface> = () => {
       <React.Fragment>
         {gamesType == "live" ? (
           <React.Fragment>
-            {liveGame &&
-              liveGame.length != 0 &&
-              liveGame.map((item: any, index: number) => {
-                return (
-                  <div
-                    key={index}
-                    onClick={() => route.push(`/dashboard/games/${item._id}`)}
-                    className="rounded-lg overflow-hidden cursor-pointer"
-                  >
-                    <Image
-                      src={imageURL + item.game_icon}
-                      alt={item.game_icon}
-                      className="object-cover"
-                      width={200}
-                      height={200}
-                    />
-                  </div>
-                );
-              })}
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <div className="mx-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3">
-              {reviewGames &&
-                reviewGames.length != 0 &&
-                reviewGames.map((item: any, index: number) => {
+            {liveGame && liveGame.length != 0 ? (
+              <div className="mx-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3">
+                {liveGame.map((item: any, index: number) => {
                   return (
                     <div
                       key={index}
                       onClick={() => route.push(`/dashboard/games/${item._id}`)}
-                      className="rounded-lg overflow-hidden cursor-pointer border-[1px] border-primary-darken/25"
+                      className="rounded-lg overflow-hidden cursor-pointer border-[1px] border-primary-normal flex items-center justify-center"
+                    >
+                      <Image
+                        src={imageURL + item.game_icon}
+                        alt={item.game_icon}
+                        className="object-contain"
+                        width={120}
+                        height={120}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="w-full h-96 flex items-center justify-center">
+                <p>No Data</p>
+              </div>
+            )}
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            {reviewGames && reviewGames.length != 0 ? (
+              <div className="mx-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3">
+                {reviewGames.map((item: any, index: number) => {
+                  return (
+                    <div
+                      key={index}
+                      onClick={() => route.push(`/dashboard/games/${item._id}`)}
+                      className="rounded-lg overflow-hidden cursor-pointer border-[1px] border-primary-normal flex items-center justify-center"
                     >
                       <Image
                         src={imageURL + item.game_icon}
                         alt={item.game_icon}
                         className="object-cover"
-                        width={200}
-                        height={200}
+                        width={120}
+                        height={120}
                       />
                     </div>
                   );
                 })}
-            </div>
+              </div>
+            ) : (
+              <div className="w-full h-96 flex items-center justify-center">
+                <p>No Data</p>
+              </div>
+            )}
           </React.Fragment>
         )}
       </React.Fragment>

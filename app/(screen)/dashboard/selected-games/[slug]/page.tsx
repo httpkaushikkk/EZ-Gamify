@@ -40,25 +40,6 @@ const View = ({ params }: { params: { slug: string[] } }) => {
     }
   };
 
-  const selectGame = async () => {
-    setConfirmation(false)
-    try {
-      const data = await api({
-        url: "/user/edit",
-        data: { _id: getCookie("auth-id"), game_id: slug },
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getCookie("auth-token")}`,
-        },
-      });
-      if (data.hasOwnProperty("message")) {
-        toast.success(data.message);
-      }
-    } catch (err: any) {
-      toast.error(err.response.data.message);
-    }
-  };
-
   const openGame = (url: string) => {
     let width = 600;
     let height = 700;
@@ -110,7 +91,7 @@ const View = ({ params }: { params: { slug: string[] } }) => {
 
   return (
     <React.Fragment>
-      <div className="p-5 w-full h-screen bg-primary-extraLight/15">
+      <div className="p-5">
         <div>
           <div className="md:flex items-center px-4">
             <p className="text-3xl mb-2 tracking-wider font-medium ">
@@ -126,13 +107,11 @@ const View = ({ params }: { params: { slug: string[] } }) => {
               dataTitle="Play Game"
               onClick={() => openGame(game.game_url)}
             />
-            {!game.is_under_review && (
-              <PlayButton
-                dataText="Purchase"
-                dataTitle="Add Game"
-                onClick={() => setConfirmation(true)}
-              />
-            )}
+            <PlayButton
+              dataText="Generate"
+              dataTitle="Link"
+              onClick={() => setConfirmation(true)}
+            />
           </div>
         </div>
         <div className="max-w-[1650px] h-[580px] w-full m-auto py-3 px-4 relative group">
@@ -169,9 +148,9 @@ const View = ({ params }: { params: { slug: string[] } }) => {
       </div>
       <Confirmation
         open={isConfirmation}
-        body={"Are you sure want to add the game ?"}
+        body={"Are you sure want to generate production link ?"}
         handle={() => setConfirmation(false)}
-        onClick={selectGame}
+        onClick={() => {}}
       />
     </React.Fragment>
   );

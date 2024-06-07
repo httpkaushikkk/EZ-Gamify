@@ -47,6 +47,18 @@ const SideBar: React.FC<SideBarInterface> = () => {
                   <span className="ml-3 text-white tracking-wider">Games</span>
                 </div>
               </Link>
+              <Link href="/dashboard/selected-games">
+                <div
+                  className={`flex items-center h-12 px-2 mt-2 ${
+                    pathname === "/dashboard/selected-games"
+                      ? "bg-primary-dark/35 rounded-lg"
+                      : ""
+                  }`}
+                >
+                  <Image src={game} alt="" className="w-6 h-6" />
+                  <span className="ml-3 text-white tracking-wider">Selected Games</span>
+                </div>
+              </Link>
             </div>
           </div>
           <div className="mb-5 px-3 cursor-pointer">
