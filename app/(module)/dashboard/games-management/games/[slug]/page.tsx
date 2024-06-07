@@ -10,6 +10,7 @@ import PlayButton from "@/app/components/buttons/play_button";
 import { checkPermission } from "@/app/helper/permission";
 import Link from "next/link";
 import EditIcon from "@/app/assets/svg/edit";
+import { convertFilePathToURL } from "@/app/helper/convertFilePathToURL";
 
 interface ViewInterface {}
 
@@ -75,6 +76,18 @@ const View: React.FC<ViewInterface> = ({ params }: any) => {
     }
   };
 
+  let filepath =
+    game.poster && Array.isArray(game.poster) && game.poster.length > 0
+      ? imageURL +
+        game.poster[
+          typeof currentIndex !== "undefined" &&
+          currentIndex >= 0 &&
+          currentIndex < game.poster.length
+            ? currentIndex
+            : 0
+        ].path
+      : "";
+
   return (
     <div className="px-5 pt-5">
       <div className="flex items-center justify-between my-4">
@@ -101,20 +114,7 @@ const View: React.FC<ViewInterface> = ({ params }: any) => {
       <div className="max-w-[1650px] h-[580px] w-full m-auto py-3 px-4 relative group">
         <div
           style={{
-            backgroundImage: `url(${
-              imageURL +
-              (game.poster &&
-              Array.isArray(game.poster) &&
-              game.poster.length > 0
-                ? game.poster[
-                    typeof currentIndex !== "undefined" &&
-                    currentIndex >= 0 &&
-                    currentIndex < game.poster.length
-                      ? currentIndex
-                      : 0
-                  ].path
-                : "")
-            })`,
+            backgroundImage: `url(${convertFilePathToURL(filepath)})`,
           }}
           className="w-full h-full rounded-2xl bg-center bg-cover duration-500"
         ></div>

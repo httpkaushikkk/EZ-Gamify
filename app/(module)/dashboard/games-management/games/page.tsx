@@ -101,25 +101,31 @@ const Games: React.FC<GamesInterface> = () => {
       <React.Fragment>
         {gamesType == "live" ? (
           <React.Fragment>
-            {liveGame &&
-              liveGame.length != 0 &&
-              liveGame.map((item: any, index: number) => {
-                return (
-                  <div
-                    key={index}
-                    onClick={() => route.push(`/dashboard/games-management/games/${item._id}`)}
-                    className="rounded-lg overflow-hidden cursor-pointer"
-                  >
-                    <img
-                      src={imageURL + item.game_icon}
-                      alt={item.game_icon}
-                      className="object-cover"
-                      width={200}
-                      height={200}
-                    />
-                  </div>
-                );
-              })}
+            <div className="mx-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3">
+              {liveGame &&
+                liveGame.length != 0 &&
+                liveGame.map((item: any, index: number) => {
+                  return (
+                    <div
+                      key={index}
+                      onClick={() =>
+                        route.push(
+                          `/dashboard/games-management/games/${item._id}`
+                        )
+                      }
+                      className="rounded-lg overflow-hidden cursor-pointer border-[1px] border-dark-primary-blue/50 flex items-center justify-center"
+                    >
+                      <img
+                        src={imageURL + item.game_icon}
+                        alt={item.game_icon}
+                        className="object-cover"
+                        width={120}
+                        height={120}
+                      />
+                    </div>
+                  );
+                })}
+            </div>
           </React.Fragment>
         ) : (
           <React.Fragment>
@@ -130,15 +136,19 @@ const Games: React.FC<GamesInterface> = () => {
                   return (
                     <div
                       key={index}
-                      onClick={() => route.push(`/dashboard/games-management/games/${item._id}`)}
-                      className="rounded-lg overflow-hidden cursor-pointer border-[1px] border-primary-darken/25"
+                      onClick={() =>
+                        route.push(
+                          `/dashboard/games-management/games/${item._id}`
+                        )
+                      }
+                      className="rounded-lg overflow-hidden cursor-pointer border-[1px] border-dark-primary-blue/50 flex items-center justify-center"
                     >
                       <img
                         src={imageURL + item.game_icon}
                         alt={item.game_icon}
                         className="object-cover"
-                        width={200}
-                        height={200}
+                        width={120}
+                        height={120}
                       />
                     </div>
                   );

@@ -12,6 +12,7 @@ import CssIcon from "../../../../../assets/svg/css";
 import JsonIcon from "../../../../../assets/svg/json";
 import HtmlIcon from "../../../../../assets/svg/html";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import { Switch } from "@mui/material";
 
 interface AddInterface {}
 
@@ -27,6 +28,28 @@ const Add: React.FC<AddInterface> = () => {
   let [description, setDescription] = useState<string>("");
   let [projectName, setProjectName] = useState<string>("");
   let [selectedPoster, setSelectedPoster] = useState<any>([]);
+  let [underReview, setUnderReview] = useState<any>();
+
+  const resetState = () => {
+    files = [];
+    name = "";
+    title = "";
+    gameIcon = "";
+    entryFile = "";
+    showPosters = [];
+    description = "";
+    projectName = "";
+    selectedPoster = [];
+    setFiles(files);
+    setName(name);
+    setTitle(title);
+    setgameIcon(gameIcon);
+    setEntryFile(entryFile);
+    setShowPosters(showPosters);
+    setDescription(description);
+    setProjectName(projectName);
+    setSelectedPoster(selectedPoster);
+  };
 
   const saveGame = async () => {
     const formData: any = new FormData();
@@ -67,7 +90,10 @@ const Add: React.FC<AddInterface> = () => {
           },
         })
           .then((response) => {
-            console.log(response);
+            if (response.hasOwnProperty("message")) {
+              toast.success(response.message);
+              resetState();
+            }
           })
           .catch((err) => {
             console.log(err);
@@ -276,6 +302,12 @@ const Add: React.FC<AddInterface> = () => {
               // value={gameIcon}
               onChange={handleIconSelected}
             />
+          </div>
+          <div className="mt-5 flex items-center">
+            {/* <Switch
+              checked={underReview}
+              onChange={(e) => console.log(e.target.value)}
+            /> */}
           </div>
         </div>
       </div>
