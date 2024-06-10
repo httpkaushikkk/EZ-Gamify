@@ -46,7 +46,7 @@ const Dashboard: React.FC<DashboardLayout> = () => {
         {gameReport &&
           gameReport.map((item: any, index: number) => {
             return (
-              <div className="flex items-center justify-between mb-3">
+              <div key={index} className="flex items-center justify-between mb-3">
                 <p>{item.game[0].name}</p>
                 <p>{item.open_count}</p>
               </div>

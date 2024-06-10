@@ -45,7 +45,7 @@ const LinkGenerate: React.FC<LinkGenerateInterface> = ({
       >
         <DialogTitle id="alert-dialog-title">
           <p className="tracking-wider font-medium text-lg">
-            Copy Your Live Game's URL
+            {"Copy Your Live Game's URL"}
           </p>
         </DialogTitle>
         <DialogContent>
