@@ -1,4 +1,6 @@
 "use client";
+import TickPlacementBars from "@/app/components/dashboard/graph";
+import { PieChart } from "@mui/x-charts/PieChart";
 import api from "@/app/helper/axios";
 import { getCookie } from "cookies-next";
 import React, { useEffect, useState } from "react";
@@ -25,9 +27,15 @@ const Dashboard: React.FC<DashboardLayout> = () => {
       });
       if (data.hasOwnProperty("response")) {
         let reportData = [];
+        console.log(data.response);
+
         for (let i = 0; i < data.response.length; i++) {
           if (data.response[i].user[0]._id == getCookie("auth-id")) {
-            reportData.push(data.response[i]);
+            reportData.push({
+              id: data.response[i]._id,
+              value: data.response[i].open_count,
+              label: data.response[i].game[0].name,
+            });
           }
         }
         setGameReport(reportData);
@@ -38,11 +46,24 @@ const Dashboard: React.FC<DashboardLayout> = () => {
   };
 
   console.log(gameReport);
-  
 
   return (
     <div className="w-full p-5">
-      <div className="w-96 p-5 border-[1px] border-primary-darken">
+      <div className="flex items-center">
+        <div className="border-[1px] border-primary-darken/25 drop-shadow-md rounded-lg p-4 ">
+          <PieChart
+            series={[
+              {
+                data: gameReport,
+              },
+            ]}
+            width={400}
+            height={200}
+            colors={["#395886", "#B1C9EF"]}
+          />
+        </div>
+      </div>
+      {/* <div className="w-96 p-5 border-[1px] border-primary-darken">
         {gameReport &&
           gameReport.map((item: any, index: number) => {
             return (
@@ -52,7 +73,7 @@ const Dashboard: React.FC<DashboardLayout> = () => {
               </div>
             );
           })}
-      </div>
+      </div> */}
     </div>
   );
 };

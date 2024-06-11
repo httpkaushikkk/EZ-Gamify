@@ -63,17 +63,19 @@ const Navbar: React.FC<NavbarInterface> = () => {
               </div>
             </Link>
             <Link href="/dashboard/selected-games">
-                <div
-                  className={`flex items-center h-12 px-2 mt-2 ${
-                    pathname === "/dashboard/selected-games"
-                      ? "bg-primary-dark/35 rounded-lg"
-                      : ""
-                  }`}
-                >
-                  <Image src={game} alt="" className="w-6 h-6" />
-                  <span className="ml-3 text-white tracking-wider">Selected Games</span>
-                </div>
-              </Link>
+              <div
+                className={`flex items-center h-12 px-2 mt-2 ${
+                  pathname === "/dashboard/selected-games"
+                    ? "bg-primary-dark/35 rounded-lg"
+                    : ""
+                }`}
+              >
+                <Image src={game} alt="" className="w-6 h-6" />
+                <span className="ml-3 text-white tracking-wider">
+                  Selected Games
+                </span>
+              </div>
+            </Link>
           </div>
         </div>
         <div className="mb-5 px-3">
@@ -108,16 +110,25 @@ const Navbar: React.FC<NavbarInterface> = () => {
           <Image src={menu} alt="" className="w-8 h-8" />
         </a>
         <div className="flex items-center">
+          <div className="flex items-center border-[2px] border-black px-2 py-1 rounded-3xl">
+            <div className="w-7 h-7 rounded-full bg-primary-darken flex items-center justify-center text-white">
+              ₹
+            </div>
+            <p className="ml-1 text-lg">5000</p>
+          </div>
           <a href={void 0} className="cursor-pointer">
-            <Image src={bell} alt="" className="w-8 h-8 mr-4" />
+            <Image src={bell} alt="" className="w-8 h-8 mx-4" />
           </a>
-          <div className="w-12 h-12 flex items-center justify-center rounded-full border-[1px] border-black/15">
+          <Link
+            href="/dashboard/profile"
+            className="w-12 h-12 flex items-center justify-center rounded-full border-[1px] border-black/15"
+          >
             <Image
               src={profile}
               alt="profile"
               className="w-10 h-10 rounded-full"
             />
-          </div>
+          </Link>
         </div>
       </div>
       <Drawer open={open} onClose={toggleDrawer(false)}>

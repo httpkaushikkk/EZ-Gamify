@@ -6,6 +6,13 @@ import { deleteCookie } from "cookies-next";
 import { usePathname } from "next/navigation";
 import game from "../../../assets/svg/game.svg";
 import dashboard from "../../../assets/svg/dashboard.svg";
+import setting from "../../../assets/svg/setting.svg";
+import user from "../../../assets/svg/user.svg";
+import wallet from "../../../assets/svg/wallet.svg";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 interface SideBarInterface {}
 
@@ -56,9 +63,63 @@ const SideBar: React.FC<SideBarInterface> = () => {
                   }`}
                 >
                   <Image src={game} alt="" className="w-6 h-6" />
-                  <span className="ml-3 text-white tracking-wider">Selected Games</span>
+                  <span className="ml-3 text-white tracking-wider">
+                    Selected Games
+                  </span>
                 </div>
               </Link>
+              <Accordion
+                slotProps={{ transition: { unmountOnExit: true } }}
+                sx={{ bgcolor: "#395886", boxShadow: "none", marginTop: 1 }}
+              >
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon className="text-white" />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                  sx={{ bgcolor: "#395886", boxShadow: "none" }}
+                >
+                  <Image src={setting} alt="" className="w-6 h-6 -ml-2" />
+                  <p className="ml-3 text-white tracking-wider">Settings</p>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Link href="/dashboard/settings/profile">
+                    <div
+                      className={`flex items-center h-10 px-2 ml-2 ${
+                        pathname === "/dashboard/settings/profile"
+                          ? "bg-primary-dark/35 rounded-lg"
+                          : ""
+                      }`}
+                    >
+                      <Image
+                        src={user}
+                        alt=""
+                        className="w-[1.35rem] h-[1.35rem]"
+                      />
+                      <span className="ml-3 text-white tracking-wider text-[0.950rem]">
+                        Profile
+                      </span>
+                    </div>
+                  </Link>
+                  <Link href="/dashboard/settings/wallet">
+                    <div
+                      className={`flex items-center h-10 px-2 ml-2 mt-3 ${
+                        pathname === "/dashboard/settings/wallet"
+                          ? "bg-primary-dark/35 rounded-lg"
+                          : ""
+                      }`}
+                    >
+                      <Image
+                        src={wallet}
+                        alt=""
+                        className="w-[1.35rem] h-[1.35rem]"
+                      />
+                      <span className="ml-3 text-white tracking-wider text-[0.950rem]">
+                        Wallet
+                      </span>
+                    </div>
+                  </Link>
+                </AccordionDetails>
+              </Accordion>
             </div>
           </div>
           <div className="mb-5 px-3 cursor-pointer">

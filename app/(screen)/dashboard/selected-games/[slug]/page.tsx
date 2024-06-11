@@ -107,6 +107,31 @@ const View = ({ params }: { params: { slug: string[] } }) => {
     }
   };
 
+  const editGameUrl = async () => {
+    const obj = {
+      _id: activeURL._id,
+      user_id: getCookie("auth-id"),
+      game_id: slug,
+      is_active: activeURL.is_active == true ? false : true,
+    };
+    try {
+      const data = await api({
+        url: "/game/active/edit",
+        data: obj,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getCookie("auth-token")}`,
+        },
+      });
+      if (data.hasOwnProperty("message")) {
+        toast.success(data.message);
+        fetchUrl();
+      }
+    } catch (err: any) {
+      toast.error(err.response.data.message);
+    }
+  };
+
   const openGame = (url: string) => {
     let width = 600;
     let height = 700;
@@ -165,6 +190,8 @@ const View = ({ params }: { params: { slug: string[] } }) => {
         console.error("Could not copy URL: ", err);
       });
   };
+
+  console.log(activeURL);
 
   return (
     <React.Fragment>
@@ -236,6 +263,15 @@ const View = ({ params }: { params: { slug: string[] } }) => {
         <div className="p-4">
           <p>{game.description}</p>
         </div>
+        <a
+          href={void 0}
+          className="mx-4 bg-red/60 inline-block px-5 py-2 cursor-pointer rounded-md"
+          onClick={editGameUrl}
+        >
+          <p className="capitalize text-white tracking-wider font-semibold">
+            {activeURL.is_active ? "deactivate" : "active"}
+          </p>
+        </a>
       </div>
       <Confirmation
         open={isConfirmation}
