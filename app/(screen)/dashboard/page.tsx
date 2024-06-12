@@ -27,25 +27,25 @@ const Dashboard: React.FC<DashboardLayout> = () => {
       });
       if (data.hasOwnProperty("response")) {
         let reportData = [];
-        console.log(data.response);
-
         for (let i = 0; i < data.response.length; i++) {
-          if (data.response[i].user[0]._id == getCookie("auth-id")) {
-            reportData.push({
-              id: data.response[i]._id,
-              value: data.response[i].open_count,
-              label: data.response[i].game[0].name,
-            });
-          }
+          console.log(data.response[i]);
+          
+          // if (data.response[i].user[0]._id == getCookie("auth-id")) {
+          //   reportData.push({
+          //     id: data.response[i]._id,
+          //     value: data.response[i].open_count,
+          //     label: data.response[i].game[0].name,
+          //   });
+          // }
         }
-        setGameReport(reportData);
+        // setGameReport(reportData);
       }
     } catch (err: any) {
-      toast.error(err.response.data.message);
+      console.log(err);
+      
+      // toast.error(err.response.data.message);
     }
   };
-
-  console.log(gameReport);
 
   return (
     <div className="w-full p-5">

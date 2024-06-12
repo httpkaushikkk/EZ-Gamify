@@ -38,8 +38,6 @@ const Register: React.FC<RegisterInterface> = () => {
     },
     validationSchema,
     onSubmit: async (values) => {
-      console.log(isUsername);
-
       if (isUsername) {
         setLoading(true);
         try {
@@ -48,12 +46,24 @@ const Register: React.FC<RegisterInterface> = () => {
             data: values,
             headers: {},
           });
-          if (data.status == 1) {
-            setCookie("auth-token", data.data.token);
-            setCookie("auth-id", data.data.user._id);
-            window.location.reload();
+          try {
+            const wallet = await api({
+              url: "/wallet/add",
+              data: { user: data.data.user._id },
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${data.data.token}`,
+              },
+            });
+            if (wallet.status == 1) {
+              setCookie("auth-token", data.data.token);
+              setCookie("auth-id", data.data.user._id);
+              window.location.reload();
+            }
+          } catch (err: any) {
+            setLoading(false);
+            toast.error(err.response.data.message);
           }
-          setLoading(false);
         } catch (err: any) {
           setLoading(false);
           toast.error(err.response.data.message);

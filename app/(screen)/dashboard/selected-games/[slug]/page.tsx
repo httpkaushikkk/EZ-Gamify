@@ -269,7 +269,7 @@ const View = ({ params }: { params: { slug: string[] } }) => {
           onClick={editGameUrl}
         >
           <p className="capitalize text-white tracking-wider font-semibold">
-            {activeURL.is_active ? "deactivate" : "active"}
+            {activeURL && activeURL.is_active ? "deactivate" : "active"}
           </p>
         </a>
       </div>
