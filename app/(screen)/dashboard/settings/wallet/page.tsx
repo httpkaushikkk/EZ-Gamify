@@ -8,18 +8,24 @@ import Script from "next/script";
 import moment from "moment";
 import rechargeIcon from "@/app/assets/svg/recharge.svg";
 import Image from "next/image";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import excelIcon from "@/app/assets/svg/excel.svg";
 
 interface WalletInterface {}
 
 const Wallet: React.FC<WalletInterface> = () => {
   let [graphData, setGraphData] = useState<any>([]);
   let [walletData, setWalletData] = useState<any>({});
+  let [totalData, setTotalData] = useState<number>(0);
   let [transection, setTransection] = useState<any>([]);
+  let [totalPages, setTotalPages] = useState<number>(0);
+  let [currentPage, setCurrentPage] = useState<number>(0);
   let [selectedAmount, setSelectedAmount] = useState<number>(0);
 
   useEffect(() => {
     fetchWallet();
-    fetchTransection();
+    fetchTransection(1);
   }, []);
 
   const fetchWallet = async () => {
@@ -42,17 +48,36 @@ const Wallet: React.FC<WalletInterface> = () => {
     }
   };
 
-  const fetchTransection = async () => {
+  const nextData = () => {
+    if (currentPage != totalPages) {
+      let page = currentPage + 1;
+      setCurrentPage(page);
+      fetchTransection(page);
+    }
+  };
+
+  const prevData = () => {
+    if (currentPage >= 1) {
+      let page = currentPage - 1;
+      setCurrentPage(page);
+      fetchTransection(page);
+    }
+  };
+
+  const fetchTransection = async (page: any) => {
     try {
       const data = await api({
         url: "/transaction/fetch-all",
-        data: {},
+        data: { page: page, pageSize: 6 },
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getCookie("auth-token")}`,
         },
       });
       if (data.hasOwnProperty("response")) {
+        setCurrentPage(data.currentPage);
+        setTotalPages(data.totalPages);
+        setTotalData(data.totalData);
         setTransection(data.response);
         const traData = data.response.filter(
           (el: any) => el.user[0]._id == getCookie("auth-id")
@@ -79,6 +104,65 @@ const Wallet: React.FC<WalletInterface> = () => {
           { id: 1, value: debitDataValueSum, label: "Spend on games" },
         ];
         setGraphData(graphDataMap);
+      }
+    } catch (err: any) {
+      toast.error(err.response.data.message);
+    }
+  };
+
+  const downloadWExcel = async () => {
+    try {
+      const data = await api({
+        url: "/transaction/excel",
+        data: {},
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getCookie("auth-token")}`,
+        },
+      });
+      if (data.hasOwnProperty("response")) {
+        const traData = data.response.filter(
+          (el: any) => el.user[0]._id == getCookie("auth-id")
+        );
+        let excelData = [];
+        for (let i = 0; i < traData.length; i++) {
+          let type = traData[i].is_credit
+            ? "Recharge wallet"
+            : traData[i].is_debit
+            ? "Spend on games"
+            : "";
+          let details =
+            traData[i].is_debit && traData[i].game.length != 0
+              ? traData[i].game[0].name
+              : "-";
+          let action = traData[i].is_debit
+            ? " Dr."
+            : traData[i].is_credit
+            ? " Cr."
+            : "";
+          excelData.push({
+            ["#"]: i,
+            ["Date"]: moment(traData[i].createdAt).format(
+              "MMMM Do YYYY, h:mm:ss a"
+            ),
+            ["Type"]: type,
+            ["Details"]: details,
+            ["Amount"]: traData[i].amount,
+            [""]: action,
+          });
+        }
+
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "transections");
+        const excelBuffer = XLSX.write(workbook, {
+          bookType: "xlsx",
+          type: "array",
+        });
+        const excelBlob = new Blob([excelBuffer], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        saveAs(excelBlob, "transections");
       }
     } catch (err: any) {
       toast.error(err.response.data.message);
@@ -137,7 +221,7 @@ const Wallet: React.FC<WalletInterface> = () => {
                   if (data.hasOwnProperty("message")) {
                     toast.success(data.message);
                     fetchWallet();
-                    fetchTransection();
+                    fetchTransection(1);
                   }
                 }
               } catch (err: any) {
@@ -164,8 +248,8 @@ const Wallet: React.FC<WalletInterface> = () => {
     <div className="">
       <Script src="https://checkout.razorpay.com/v1/checkout.js"></Script>
       {/* Recharger */}
-      <div className=" xl:flex p-5">
-        <div className="xl:w-[70%]">
+      <div className="p-5">
+        <div className="flex">
           <div className="w-full h-64 flex flex-col items-center justify-center border-2 border-primary-light rounded-lg bg-primary-light">
             <div className="flex items-center">
               <p className="text-7xl tracking-wide font-black text-primary-darken mb-3">
@@ -224,87 +308,154 @@ const Wallet: React.FC<WalletInterface> = () => {
               </a>
             )} */}
           </div>
-          <div className="w-full mt-5">
-            <p className="text-2xl tracking-wide font-medium text-black">
-              Recent transactions
-            </p>
-            <div className="mt-3">
-              <div className="overflow-x-auto">
-                <table className="border-[1px] border-primary-darken/15 rounded-lg divide-black/15 dark:border-light-primary-white/15 table-auto min-w-full divide-y dark:divide-light-primary-white/15">
-                  <thead>
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
-                        #
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
-                        Date/Time
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
-                        Type
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
-                        Details
-                      </th>
-                      <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70 text-right">
-                        Amount
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide divide-black/10 dark:divide-light-primary-white/15">
-                    {transection &&
-                      transection.length != 0 &&
-                      transection.map((item: any, index: number) => {
-                        return (
-                          <tr key={index} className={`cursor-pointer ${item.is_debit ? 'bg-red/15' : 'bg-green/15'}`}>
-                            <td className="px-6 py-5 whitespace-nowrap">
-                              {index + 1}
-                            </td>
-                            <td className="px-6 py-5 whitespace-nowrap">
-                              {moment(item.createdAt).format(
-                                "MMMM Do YYYY, h:mm:ss a"
-                              )}
-                            </td>
-                            <td className="px-6 py-5 whitespace-nowrap">
-                              {item.is_credit
-                                ? "Recharge wallet"
-                                : item.is_debit
-                                ? "Spend on games"
-                                : ""}
-                            </td>
-                            <td className="px-6 py-5 whitespace-nowrap">
-                              {item.is_debit && item.game.length != 0
-                                ? item.game[0].name
-                                : "-"}
-                            </td>
-                            <td className="px-6 py-5 whitespace-nowrap text-right">
-                              {item.amount} {item.currency[0].symbol}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                </table>
-              </div>
+          <div className="w-[50rem] mt-12 xl:mt-0">
+            <div className="w-auto mt-5">
+              <PieChart
+                series={[
+                  {
+                    data: graphData,
+                    highlightScope: { faded: "global", highlighted: "item" },
+                    faded: {
+                      innerRadius: 30,
+                      additionalRadius: -30,
+                      color: "gray",
+                    },
+                  },
+                ]}
+                height={200}
+                colors={["#B1C9EF", "#395886"]}
+              />
             </div>
           </div>
         </div>
-        <div className="xl:w-[30%] mt-12 xl:mt-0">
-          <div className="w-auto mt-5">
-            <PieChart
-              series={[
-                {
-                  data: graphData,
-                  highlightScope: { faded: "global", highlighted: "item" },
-                  faded: {
-                    innerRadius: 30,
-                    additionalRadius: -30,
-                    color: "gray",
-                  },
-                },
-              ]}
-              height={200}
-              colors={["#B1C9EF", "#395886"]}
-            />
+        <div className="w-full mt-5">
+          <div className="flex items-center">
+            <p className="text-2xl tracking-wide font-medium text-black">
+              Recent transactions
+            </p>
+            <a
+              href={void 0}
+              onClick={downloadWExcel}
+              className="ml-5 cursor-pointer"
+            >
+              <Image src={excelIcon} alt="" className="" />
+            </a>
+          </div>
+          <div className="mt-3">
+            <div className="overflow-x-auto">
+              <table className="border-[1px] border-primary-darken/15 rounded-lg divide-black/15 dark:border-light-primary-white/15 table-auto min-w-full divide-y dark:divide-light-primary-white/15">
+                <thead>
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
+                      #
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
+                      Date/Time
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
+                      Type
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
+                      Details
+                    </th>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70 text-right">
+                      Amount
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide divide-black/10 dark:divide-light-primary-white/15">
+                  {transection &&
+                    transection.length != 0 &&
+                    transection.map((item: any, index: number) => {
+                      return (
+                        <tr
+                          key={index}
+                          className={`cursor-pointer ${
+                            item.is_debit ? "bg-red/15" : "bg-green/15"
+                          }`}
+                        >
+                          <td className="px-6 py-5 whitespace-nowrap">
+                            {index + 1}
+                          </td>
+                          <td className="px-6 py-5 whitespace-nowrap">
+                            {moment(item.createdAt).format(
+                              "MMMM Do YYYY, h:mm:ss a"
+                            )}
+                          </td>
+                          <td className="px-6 py-5 whitespace-nowrap">
+                            {item.is_credit
+                              ? "Recharge wallet"
+                              : item.is_debit
+                              ? "Spend on games"
+                              : ""}
+                          </td>
+                          <td className="px-6 py-5 whitespace-nowrap">
+                            {item.is_debit && item.game.length != 0
+                              ? item.game[0].name
+                              : "-"}
+                          </td>
+                          <td className="px-6 py-5 whitespace-nowrap text-right">
+                            {item.amount} {item.currency[0].symbol}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col items-center mt-6">
+          <span className="text-sm text-gray-700">
+            Showing{" "}
+            <span className="font-semibold text-gray-900">{currentPage}</span>{" "}
+            to <span className="font-semibold text-gray-900">{totalPages}</span>{" "}
+            of <span className="font-semibold text-gray-900">{totalData}</span>{" "}
+            Entries
+          </span>
+          <div className="inline-flex mt-2 xs:mt-0">
+            <button
+              onClick={prevData}
+              className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-primary-darken rounded-s hover:bg-gray-900"
+            >
+              <svg
+                className="w-3.5 h-3.5 me-2 rtl:rotate-180"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 14 10"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 5H1m0 0 4 4M1 5l4-4"
+                />
+              </svg>
+              Prev
+            </button>
+            <button
+              onClick={nextData}
+              className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-primary-darken border-0 border-s border-primary-extraLight rounded-e hover:bg-gray-900"
+            >
+              Next
+              <svg
+                className="w-3.5 h-3.5 ms-2 rtl:rotate-180"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 14 10"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M1 5h12m0 0L9 1m4 4L9 9"
+                />
+              </svg>
+            </button>
           </div>
         </div>
       </div>

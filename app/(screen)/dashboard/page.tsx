@@ -1,5 +1,4 @@
 "use client";
-import TickPlacementBars from "@/app/components/dashboard/graph";
 import { PieChart } from "@mui/x-charts/PieChart";
 import api from "@/app/helper/axios";
 import { getCookie } from "cookies-next";
@@ -28,22 +27,21 @@ const Dashboard: React.FC<DashboardLayout> = () => {
       if (data.hasOwnProperty("response")) {
         let reportData = [];
         for (let i = 0; i < data.response.length; i++) {
-          console.log(data.response[i]);
-          
-          // if (data.response[i].user[0]._id == getCookie("auth-id")) {
-          //   reportData.push({
-          //     id: data.response[i]._id,
-          //     value: data.response[i].open_count,
-          //     label: data.response[i].game[0].name,
-          //   });
-          // }
+          if (data.response[i].user.length !== 0) {
+            if (data.response[i].user[0]._id == getCookie("auth-id")) {
+              reportData.push({
+                id: data.response[i]._id,
+                value: data.response[i].open_count,
+                label: data.response[i].game[0].name,
+              });
+            }
+          }
         }
-        // setGameReport(reportData);
+        setGameReport(reportData);
       }
     } catch (err: any) {
       console.log(err);
-      
-      // toast.error(err.response.data.message);
+      toast.error(err.response.data.message);
     }
   };
 

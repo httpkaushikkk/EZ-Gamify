@@ -11,7 +11,7 @@ import menu from "../../../assets/svg/menu.svg";
 import game from "../../../assets/svg/game.svg";
 import profile from "../../../assets/profile.jpg";
 import dashboard from "../../../assets/svg/dashboard.svg";
-import api from "@/app/helper/axios";
+import api, { imageURL } from "@/app/helper/axios";
 import toast from "react-hot-toast";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -26,6 +26,7 @@ interface NavbarInterface {}
 const Navbar: React.FC<NavbarInterface> = () => {
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
+  let [userData, setUserData] = useState<any>([]);
   let [walletData, setWalletData] = useState<any>({});
 
   const toggleDrawer = (newOpen: boolean) => () => {
@@ -34,7 +35,26 @@ const Navbar: React.FC<NavbarInterface> = () => {
 
   useEffect(() => {
     fetchWallet();
+    fetchProfile();
   }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const data = await api({
+        url: "/user/fetch",
+        data: { _id: getCookie("auth-id") },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getCookie("auth-token")}`,
+        },
+      });
+      if (data.hasOwnProperty("response")) {
+        setUserData(data.response);
+      }
+    } catch (err: any) {
+      toast.error(err.response.data.message);
+    }
+  };
 
   const fetchWallet = async () => {
     try {
@@ -111,57 +131,57 @@ const Navbar: React.FC<NavbarInterface> = () => {
               </div>
             </Link>
             <Accordion
-                slotProps={{ transition: { unmountOnExit: true } }}
-                sx={{ bgcolor: "#395886", boxShadow: "none", marginTop: 1 }}
+              slotProps={{ transition: { unmountOnExit: true } }}
+              sx={{ bgcolor: "#395886", boxShadow: "none", marginTop: 1 }}
+            >
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon className="text-white" />}
+                aria-controls="panel1-content"
+                id="panel1-header"
+                sx={{ bgcolor: "#395886", boxShadow: "none" }}
               >
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon className="text-white" />}
-                  aria-controls="panel1-content"
-                  id="panel1-header"
-                  sx={{ bgcolor: "#395886", boxShadow: "none" }}
-                >
-                  <Image src={setting} alt="" className="w-6 h-6 -ml-2" />
-                  <p className="ml-3 text-white tracking-wider">Settings</p>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Link href="/dashboard/settings/profile">
-                    <div
-                      className={`flex items-center h-10 px-2 ml-2 ${
-                        pathname === "/dashboard/settings/profile"
-                          ? "bg-primary-dark/35 rounded-lg"
-                          : ""
-                      }`}
-                    >
-                      <Image
-                        src={user}
-                        alt=""
-                        className="w-[1.35rem] h-[1.35rem]"
-                      />
-                      <span className="ml-3 text-white tracking-wider text-[0.950rem]">
-                        Profile
-                      </span>
-                    </div>
-                  </Link>
-                  <Link href="/dashboard/settings/wallet">
-                    <div
-                      className={`flex items-center h-10 px-2 ml-2 mt-3 ${
-                        pathname === "/dashboard/settings/wallet"
-                          ? "bg-primary-dark/35 rounded-lg"
-                          : ""
-                      }`}
-                    >
-                      <Image
-                        src={wallet}
-                        alt=""
-                        className="w-[1.35rem] h-[1.35rem]"
-                      />
-                      <span className="ml-3 text-white tracking-wider text-[0.950rem]">
-                        Wallet
-                      </span>
-                    </div>
-                  </Link>
-                </AccordionDetails>
-              </Accordion>
+                <Image src={setting} alt="" className="w-6 h-6 -ml-2" />
+                <p className="ml-3 text-white tracking-wider">Settings</p>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Link href="/dashboard/settings/profile">
+                  <div
+                    className={`flex items-center h-10 px-2 ml-2 ${
+                      pathname === "/dashboard/settings/profile"
+                        ? "bg-primary-dark/35 rounded-lg"
+                        : ""
+                    }`}
+                  >
+                    <Image
+                      src={user}
+                      alt=""
+                      className="w-[1.35rem] h-[1.35rem]"
+                    />
+                    <span className="ml-3 text-white tracking-wider text-[0.950rem]">
+                      Profile
+                    </span>
+                  </div>
+                </Link>
+                <Link href="/dashboard/settings/wallet">
+                  <div
+                    className={`flex items-center h-10 px-2 ml-2 mt-3 ${
+                      pathname === "/dashboard/settings/wallet"
+                        ? "bg-primary-dark/35 rounded-lg"
+                        : ""
+                    }`}
+                  >
+                    <Image
+                      src={wallet}
+                      alt=""
+                      className="w-[1.35rem] h-[1.35rem]"
+                    />
+                    <span className="ml-3 text-white tracking-wider text-[0.950rem]">
+                      Wallet
+                    </span>
+                  </div>
+                </Link>
+              </AccordionDetails>
+            </Accordion>
           </div>
         </div>
         <div className="mb-5 px-3">
@@ -210,9 +230,11 @@ const Navbar: React.FC<NavbarInterface> = () => {
             className="w-12 h-12 flex items-center justify-center rounded-full border-[1px] border-black/15"
           >
             <Image
-              src={profile}
+              src={imageURL + userData.profile_img}
               alt="profile"
-              className="w-10 h-10 rounded-full"
+              width={35}
+              height={35}
+              className="rounded-full"
             />
           </Link>
         </div>

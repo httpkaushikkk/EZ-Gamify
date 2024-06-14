@@ -16,10 +16,12 @@ const View = ({ params }: { params: { slug: string[] } }) => {
   const { slug } = params;
   let [game, setGame] = useState<any>({});
   let [currentIndex, setCurrentIndex] = useState(0);
+  let [activeGame, setActiveGame] = useState<any>([]);
   let [isConfirmation, setConfirmation] = useState<boolean>(false);
 
   useEffect(() => {
     fetchGames();
+    fetchUser();
   }, []);
 
   const fetchGames = async () => {
@@ -40,8 +42,30 @@ const View = ({ params }: { params: { slug: string[] } }) => {
     }
   };
 
+  const fetchUser = async () => {
+    try {
+      const data = await api({
+        url: "/user/fetch",
+        data: { _id: getCookie("auth-id") },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getCookie("auth-token")}`,
+        },
+      });
+      if (data.hasOwnProperty("response")) {
+        let activeGamesId = [];
+        for (let i = 0; i < data.response.active_games.length; i++) {
+          activeGamesId.push(data.response.active_games[i]._id);
+        }
+        setActiveGame(activeGamesId);
+      }
+    } catch (err: any) {
+      toast.error(err.response.data.message);
+    }
+  };
+
   const selectGame = async () => {
-    setConfirmation(false)
+    setConfirmation(false);
     try {
       const data = await api({
         url: "/user/edit",
@@ -126,13 +150,20 @@ const View = ({ params }: { params: { slug: string[] } }) => {
               dataTitle="Play Game"
               onClick={() => openGame(game.game_url)}
             />
-            {!game.is_under_review && (
+            {!activeGame.includes(game._id) && !game.is_under_review && (
               <PlayButton
                 dataText="Purchase"
                 dataTitle="Add Game"
                 onClick={() => setConfirmation(true)}
               />
             )}
+            {/* {!game.is_under_review && (
+              <PlayButton
+                dataText="Purchase"
+                dataTitle="Add Game"
+                onClick={() => setConfirmation(true)}
+              />
+            )} */}
           </div>
         </div>
         <div className="max-w-[1650px] h-[580px] w-full m-auto py-3 px-4 relative group">
