@@ -46,24 +46,28 @@ const Register: React.FC<RegisterInterface> = () => {
             data: values,
             headers: {},
           });
-          try {
-            const wallet = await api({
-              url: "/wallet/add",
-              data: { user: data.data.user._id },
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${data.data.token}`,
-              },
-            });
-            if (wallet.status == 1) {
-              setCookie("auth-token", data.data.token);
-              setCookie("auth-id", data.data.user._id);
-              window.location.reload();
-            }
-          } catch (err: any) {
+          if (data.hasOwnProperty("message")) {
+            toast.success(data.message);
             setLoading(false);
-            toast.error(err.response.data.message);
           }
+          // try {
+          //   const wallet = await api({
+          //     url: "/wallet/add",
+          //     data: { user: data.data.user._id },
+          //     headers: {
+          //       "Content-Type": "application/json",
+          //       Authorization: `Bearer ${data.data.token}`,
+          //     },
+          //   });
+          //   if (wallet.status == 1) {
+          //     setCookie("auth-token", data.data.token);
+          //     setCookie("auth-id", data.data.user._id);
+          //     window.location.reload();
+          //   }
+          // } catch (err: any) {
+          //   setLoading(false);
+          //   toast.error(err.response.data.message);
+          // }
         } catch (err: any) {
           setLoading(false);
           toast.error(err.response.data.message);
