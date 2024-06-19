@@ -225,10 +225,7 @@ const Navbar: React.FC<NavbarInterface> = () => {
           <a href={void 0} className="cursor-pointer">
             <Image src={bell} alt="" className="w-8 h-8 mx-4" />
           </a>
-          <Link
-            href="/dashboard/profile"
-            className="w-12 h-12 flex items-center justify-center rounded-full border-[1px] border-black/15"
-          >
+          <div className="w-12 h-12 flex items-center justify-center rounded-full border-[1px] border-black/15">
             <Image
               src={imageURL + userData.profile_img}
               alt="profile"
@@ -236,7 +233,7 @@ const Navbar: React.FC<NavbarInterface> = () => {
               height={35}
               className="rounded-full"
             />
-          </Link>
+          </div>
         </div>
       </div>
       <Drawer open={open} onClose={toggleDrawer(false)}>

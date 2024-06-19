@@ -34,7 +34,7 @@ const Game: React.FC<GameInterface> = () => {
         for (let i = 0; i < data.response.length; i++) {
           if (data.response[i].is_under_review == false) {
             liveGames.push(data.response[i]);
-          } else if (data.response[i].is_under_review) {
+          } else if (data.response[i].is_under_review) {   
             underReviewGames.push(data.response[i]);
           }
         }
@@ -45,7 +45,7 @@ const Game: React.FC<GameInterface> = () => {
       toast.error(err.response.data.message);
     }
   };
-
+  
   return (
     <div className="w-full h-screen bg-primary-extraLight/15">
       <div className="flex items-center p-5">

@@ -68,7 +68,7 @@ const Wallet: React.FC<WalletInterface> = () => {
     try {
       const data = await api({
         url: "/transaction/fetch-all",
-        data: { page: page, pageSize: 6 },
+        data: { page: page, pageSize: 6, _id: getCookie("auth-id") },
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getCookie("auth-token")}`,
@@ -79,9 +79,10 @@ const Wallet: React.FC<WalletInterface> = () => {
         setTotalPages(data.totalPages);
         setTotalData(data.totalData);
         setTransection(data.response);
-        const traData = data.response.filter(
-          (el: any) => el.user[0]._id == getCookie("auth-id")
-        );
+        const traData = data.response;
+        // .filter(
+        //   (el: any) => el.user[0]._id == getCookie("auth-id")
+        // );
         let creditData = [];
         let debitData = [];
         for (let i = 0; i < traData.length; i++) {

@@ -9,7 +9,6 @@ import { LineChart } from "@mui/x-charts/LineChart";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { ResponsiveChartContainer } from "@mui/x-charts";
 import {
   convertObjToArr,
   generateMonthlyReport,
@@ -199,7 +198,7 @@ const Dashboard: React.FC<DashboardLayout> = () => {
     try {
       const data = await api({
         url: "/transaction/fetch-all",
-        data: { page: 0, pageSize: 4 },
+        data: { page: 0, pageSize: 4, _id: getCookie("auth-id") },
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getCookie("auth-token")}`,
