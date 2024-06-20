@@ -9,6 +9,7 @@ import { LineChart } from "@mui/x-charts/LineChart";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Chart from "react-apexcharts";
 import {
   convertObjToArr,
   generateMonthlyReport,
@@ -220,14 +221,70 @@ const Dashboard: React.FC<DashboardLayout> = () => {
     fetchTransactionReport(event.target.value);
   };
 
+  const graphData = {
+    series: [
+      {
+        name: "Spend",
+        data: debitTransaction,
+      },
+      {
+        name: "Recharge",
+        data: creditTransaction,
+      },
+    ],
+    options: {
+      chart: {
+        height: 350,
+        type: "area",
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        curve: "smooth",
+      },
+      xaxis: {
+        type: "point",
+        categories: xLabels,
+      },
+      tooltip: {
+        x: {
+          format: "dd/MM/yy HH:mm",
+        },
+      },
+    },
+  };
+
+  const pieData = {
+    series: gameReport,
+    options: {
+      chart: {
+        type: "donut",
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200,
+            },
+            legend: {
+              position: "bottom",
+            },
+          },
+        },
+      ],
+    },
+  };
+
   return (
-    <div className="w-full p-5">
-      <div className="flex">
-        <div className="w-[80%]">
+    <div className="w-full p-5 bg-primary-extraLight">
+      <div className="block xl:flex">
+        <div className="xl:w-[80%]">
           <p className="mb-5 text-xl tracking-wider font-medium">Charts</p>
-          <div className=" grid grid-cols-2 gap-5">
+          <div className=" xl:grid grid-cols-2 gap-5">
             {/* transection graph */}
-            <div className="p-5 border-[1px] rounded-lg">
+            <div className="p-5 border-[1px] rounded-lg mb-5 xl:mb-0">
               <div className="flex items-center justify-between">
                 <p className="text-lg tracking-wider">Transaction Report</p>
                 <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -252,7 +309,7 @@ const Dashboard: React.FC<DashboardLayout> = () => {
                   <FormHelperText>Without label</FormHelperText>
                 </FormControl>
               </div>
-              <LineChart
+              {/* <LineChart
                 width={600}
                 height={300}
                 series={[
@@ -260,6 +317,13 @@ const Dashboard: React.FC<DashboardLayout> = () => {
                   { data: creditTransaction, label: "Recharge" },
                 ]}
                 xAxis={[{ scaleType: "point", data: xLabels }]}
+              /> */}
+              <Chart
+                // @ts-ignore
+                options={graphData.options}
+                series={graphData.series}
+                type="area"
+                height={350}
               />
             </div>
             <div className="p-5 border-[1px] rounded-lg">
@@ -275,6 +339,12 @@ const Dashboard: React.FC<DashboardLayout> = () => {
                 width={600}
                 height={300}
               />
+              {/* <Chart
+                // @ts-ignore
+                options={pieData.options}
+                series={pieData.series}
+                type="donut"
+              /> */}
             </div>
           </div>
           <div>
@@ -346,7 +416,7 @@ const Dashboard: React.FC<DashboardLayout> = () => {
             </div>
           </div>
         </div>
-        <div className="ml-5 w-[20%]">
+        <div className="ml-5 xl:w-[20%]">
           <p className="mb-5 text-xl tracking-wider font-medium">News</p>
           <div className=" h-[83vh] bg-primary-normal/50 rounded-lg flex items-center justify-center">
             <p className="font-black text-primary-darken tracking-wider">
