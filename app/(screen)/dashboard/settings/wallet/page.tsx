@@ -279,6 +279,7 @@ const Wallet: React.FC<WalletInterface> = () => {
                 return (
                   <a
                     href={void 0}
+                    key={index}
                     onClick={() => {
                       if (selectedAmount == item) {
                         setSelectedAmount(0);
