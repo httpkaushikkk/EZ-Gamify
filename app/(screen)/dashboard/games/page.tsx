@@ -87,6 +87,10 @@ const Game: React.FC<GameInterface> = () => {
             {liveGame && liveGame.length != 0 ? (
               <div className="mx-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3">
                 {liveGame.map((item: any, index: number) => {
+
+                  console.log(imageURL + item.game_icon);
+                  
+
                   return (
                     <div
                       key={index}
