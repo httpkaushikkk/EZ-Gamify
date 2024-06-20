@@ -137,18 +137,21 @@ const View = ({ params }: { params: { slug: string[] } }) => {
     let height = 700;
     let left = screen.width / 2 - width / 2;
     let top = screen.height / 2 - height / 2;
-    let newWindow: any = window.open(
-      "",
-      "_blank",
-      "width=" +
-        width +
-        ", height=" +
-        height +
-        ", left=" +
-        left +
-        ", top=" +
-        top
-    );
+    let newWindow: any;
+    if (window !== undefined) {
+      newWindow = window.open(
+        "",
+        "_blank",
+        "width=" +
+          width +
+          ", height=" +
+          height +
+          ", left=" +
+          left +
+          ", top=" +
+          top
+      );
+    }
     newWindow.location.href = imageURL + url;
   };
 

@@ -190,7 +190,9 @@ const Navbar: React.FC<NavbarInterface> = () => {
             onClick={() => {
               deleteCookie("auth-token");
               deleteCookie("auth-id");
-              window.location.reload();
+              if (window !== undefined) {
+                window.location.reload();
+              }
             }}
           >
             <div className="h-12 px-2 border-[1px] border-white rounded-lg flex items-center justify-center">

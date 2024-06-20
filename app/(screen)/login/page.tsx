@@ -41,7 +41,9 @@ const Login: React.FC<LoginInterface> = () => {
         if (data.status == 1) {
           setCookie("auth-token", data.data.token);
           setCookie("auth-id", data.data.user._id);
-          window.location.reload();
+          if (window !== undefined) {
+            window.location.reload();
+          }
         }
         setLoading(false);
       } catch (err: any) {

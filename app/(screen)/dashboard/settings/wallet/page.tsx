@@ -234,8 +234,11 @@ const Wallet: React.FC<WalletInterface> = () => {
             },
           };
           // @ts-ignore
-          const rzp1 = window.Razorpay(options);
-          rzp1.open();
+          if (window !== undefined) {
+            // @ts-ignore
+            const rzp1 = window.Razorpay(options);
+            rzp1.open();
+          }
         }
       }
     } catch (err: any) {
