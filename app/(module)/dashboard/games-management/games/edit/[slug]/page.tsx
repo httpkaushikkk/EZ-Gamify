@@ -7,7 +7,7 @@ import PlusIcon from "@/app/assets/svg/plus";
 import TextIcon from "@/app/assets/svg/text";
 import CssIcon from "@/app/assets/svg/css";
 import JsonIcon from "@/app/assets/svg/json";
-import api from "@/app/helper/axios";
+import api, { imageURL } from "@/app/helper/axios";
 import { getCookie } from "cookies-next";
 import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -65,7 +65,7 @@ const Edit: React.FC<EditInterface> = ({ params }: any) => {
         },
       });
       toast.success(response.message);
-      fetchGames()
+      fetchGames();
     } catch (err: any) {
       toast.error(err.response.data.message);
     }
@@ -381,9 +381,9 @@ const Edit: React.FC<EditInterface> = ({ params }: any) => {
               return (
                 <div className="relative">
                   <PhotoProvider>
-                    <PhotoView src={item}>
+                    <PhotoView src={imageURL + item.path}>
                       <img
-                        src={item}
+                        src={imageURL + item.path}
                         alt="item"
                         className="w-24 h-24 object-cover"
                       />
