@@ -3,12 +3,12 @@ import toast from "react-hot-toast";
 import api from "@/app/helper/axios";
 import { getCookie } from "cookies-next";
 import MenuItem from "@mui/material/MenuItem";
-import { PieChart } from "@mui/x-charts/PieChart";
+// import { PieChart } from "@mui/x-charts/PieChart";
 import React, { useEffect, useState } from "react";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import Chart from "react-apexcharts";
+// import Chart from "react-apexcharts";
 import {
   convertObjToArr,
   generateMonthlyReport,
@@ -317,19 +317,19 @@ const Dashboard: React.FC<DashboardLayout> = () => {
                 ]}
                 xAxis={[{ scaleType: "point", data: xLabels }]}
               /> */}
-              <Chart
+              {/* <Chart
                 // @ts-ignore
                 options={graphData.options}
                 series={graphData.series}
                 type="area"
                 height={350}
-              />
+              /> */}
             </div>
             <div className="p-5 border-[1px] rounded-lg">
               <div className="flex items-center justify-between my-7">
                 <p className="text-lg tracking-wider">Game Uses Report</p>
               </div>
-              <PieChart
+              {/*<PieChart
                 series={[
                   {
                     data: gameReport,
@@ -337,7 +337,7 @@ const Dashboard: React.FC<DashboardLayout> = () => {
                 ]}
                 width={600}
                 height={300}
-              />
+              />*/}
               {/* <Chart
                 // @ts-ignore
                 options={pieData.options}
