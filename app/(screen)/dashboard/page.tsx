@@ -3,9 +3,10 @@ import toast from "react-hot-toast";
 import api from "@/app/helper/axios";
 import { getCookie } from "cookies-next";
 import MenuItem from "@mui/material/MenuItem";
-// import { PieChart } from "@mui/x-charts/PieChart";
+import { PieChart } from "@mui/x-charts/PieChart";
 import React, { useEffect, useState } from "react";
 import FormControl from "@mui/material/FormControl";
+import { LineChart } from '@mui/x-charts/LineChart';
 import FormHelperText from "@mui/material/FormHelperText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 // import Chart from "react-apexcharts";
@@ -308,7 +309,7 @@ const Dashboard: React.FC<DashboardLayout> = () => {
                   <FormHelperText>Without label</FormHelperText>
                 </FormControl>
               </div>
-              {/* <LineChart
+              <LineChart
                 width={600}
                 height={300}
                 series={[
@@ -316,7 +317,7 @@ const Dashboard: React.FC<DashboardLayout> = () => {
                   { data: creditTransaction, label: "Recharge" },
                 ]}
                 xAxis={[{ scaleType: "point", data: xLabels }]}
-              /> */}
+              />
               {/* <Chart
                 // @ts-ignore
                 options={graphData.options}
@@ -329,7 +330,7 @@ const Dashboard: React.FC<DashboardLayout> = () => {
               <div className="flex items-center justify-between my-7">
                 <p className="text-lg tracking-wider">Game Uses Report</p>
               </div>
-              {/*<PieChart
+              <PieChart
                 series={[
                   {
                     data: gameReport,
@@ -337,7 +338,7 @@ const Dashboard: React.FC<DashboardLayout> = () => {
                 ]}
                 width={600}
                 height={300}
-              />*/}
+              />
               {/* <Chart
                 // @ts-ignore
                 options={pieData.options}
