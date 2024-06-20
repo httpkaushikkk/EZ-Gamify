@@ -5,7 +5,6 @@ import { getCookie } from "cookies-next";
 import MenuItem from "@mui/material/MenuItem";
 import { PieChart } from "@mui/x-charts/PieChart";
 import React, { useEffect, useState } from "react";
-import { LineChart } from "@mui/x-charts/LineChart";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";

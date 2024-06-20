@@ -234,7 +234,7 @@ const Wallet: React.FC<WalletInterface> = () => {
             },
           };
           // @ts-ignore
-          const rzp1 = new window.Razorpay(options);
+          const rzp1 = window.Razorpay(options);
           rzp1.open();
         }
       }
