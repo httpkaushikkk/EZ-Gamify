@@ -23,25 +23,25 @@ const Add: React.FC<AddInterface> = () => {
   let [name, setName] = useState<string>("");
   let [title, setTitle] = useState<string>("");
   let [gameIcon, setgameIcon] = useState<any>(null);
+  let [underReview, setUnderReview] = useState<any>();
   let [entryFile, setEntryFile] = useState<string>("");
   let [showPosters, setShowPosters] = useState<any>([]);
   let [description, setDescription] = useState<string>("");
   let [projectName, setProjectName] = useState<string>("");
   let [selectedPoster, setSelectedPoster] = useState<any>([]);
-  let [underReview, setUnderReview] = useState<any>();
 
   const resetState = () => {
-    files = [];
     name = "";
     title = "";
+    files = [];
     gameIcon = "";
     entryFile = "";
     showPosters = [];
     description = "";
     projectName = "";
     selectedPoster = [];
-    setFiles(files);
     setName(name);
+    setFiles(files);
     setTitle(title);
     setgameIcon(gameIcon);
     setEntryFile(entryFile);
@@ -72,15 +72,34 @@ const Add: React.FC<AddInterface> = () => {
         }
         let game = await handleGameuploder();
         let gameURl = game.data.filter((item: any) => item.name == entryFile);
+        let gameAssets: any = [];
+        const allowedMimeTypes = [
+          "image/png",
+          "image/gif",
+          "image/jpeg",
+          "image/jpg",
+        ];
+        for (let i = 0; i < game.data.length; i++) {
+          if (allowedMimeTypes.includes(game.data[i].mimetype)) {
+            gameAssets.push({
+              name: game.data[i].name,
+              path: game.data[i].path,
+            });
+          }
+        }
+
         let gameData = {
           _id: getCookie("auth-id"),
           name: name,
           title: title,
           description: description,
           game_icon: response.data.path,
-          game_url: gameURl[0].path,
+          game_url: gameURl.length != 0 ? gameURl[0].path : "",
           poster: posterData,
+          game_assets: gameAssets,
         };
+
+        console.log("==> let ", gameData);
         await api({
           url: "/game/add",
           data: gameData,
