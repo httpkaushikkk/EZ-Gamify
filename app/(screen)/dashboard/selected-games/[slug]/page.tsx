@@ -11,6 +11,7 @@ import { convertFilePathToURL } from "@/app/helper/convertFilePathToURL";
 import Confirmation from "@/app/components/dashboard/modals/confirmation";
 import LinkGenerate from "@/app/components/dashboard/modals/link";
 import CopyIcon from "@/app/assets/svg/copy.svg";
+import EditAssets from "../component/edit_assets";
 
 interface ViewInterface {}
 
@@ -22,6 +23,7 @@ const View = ({ params }: { params: { slug: string[] } }) => {
   let [gameIDs, setGameIDs] = useState<any>([]);
   let [currentIndex, setCurrentIndex] = useState(0);
   let [activeURL, setActiveURL] = useState<any>({});
+  let [openEdit, setOpenEdit] = useState<boolean>(false);
   let [linkModal, setLinkModal] = useState<boolean>(false);
   let [isConfirmation, setConfirmation] = useState<boolean>(false);
 
@@ -68,6 +70,8 @@ const View = ({ params }: { params: { slug: string[] } }) => {
       toast.error(err.response.data.message);
     }
   };
+
+  const editGameAssets = async () => {};
 
   const generateURL = async () => {
     try {
@@ -194,7 +198,7 @@ const View = ({ params }: { params: { slug: string[] } }) => {
       });
   };
 
-  console.log(activeURL);
+  console.log(game);
 
   return (
     <React.Fragment>
@@ -223,6 +227,11 @@ const View = ({ params }: { params: { slug: string[] } }) => {
                 onClick={() => setConfirmation(true)}
               />
             )}
+            <PlayButton
+              dataText="Edit Game"
+              dataTitle="Edit Game"
+              onClick={() => setOpenEdit(true)}
+            />
           </div>
         </div>
         <div className="max-w-[1650px] h-[580px] w-full m-auto py-3 px-4 relative group">
@@ -292,6 +301,11 @@ const View = ({ params }: { params: { slug: string[] } }) => {
         open={linkModal}
         URL={URL}
         handle={() => setLinkModal(false)}
+      />
+      <EditAssets
+        open={openEdit}
+        handleClose={() => setOpenEdit(false)}
+        data={game}
       />
     </React.Fragment>
   );

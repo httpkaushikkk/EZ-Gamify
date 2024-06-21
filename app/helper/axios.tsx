@@ -5,8 +5,8 @@ import axios from "axios";
 export const imageURL = "https://storage.googleapis.com/";
 
 // Define your base URL for the API
-// export const baseURL = "http://192.168.29.43:8100/v1/api";
-export const baseURL = "https://ez-gamify.onrender.com/v1/api";
+export const baseURL = "http://192.168.29.43:8100/v1/api";
+// export const baseURL = "https://ez-gamify.onrender.com/v1/api";
 
 // Create an Axios instance with common configuration
 const axiosInstance = axios.create({
