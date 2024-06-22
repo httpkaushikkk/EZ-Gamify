@@ -71,23 +71,11 @@ const Add: React.FC<AddInterface> = () => {
           posterData.push({ path: poster.data[i].path });
         }
         let game = await handleGameuploder();
-        let gameURl = game.data.filter((item: any) => item.name == entryFile);
         let gameAssets: any = [];
-        const allowedMimeTypes = [
-          "image/png",
-          "image/gif",
-          "image/jpeg",
-          "image/jpg",
-        ];
         for (let i = 0; i < game.data.length; i++) {
-          if (allowedMimeTypes.includes(game.data[i].mimetype)) {
-            gameAssets.push({
-              name: game.data[i].name,
-              path: game.data[i].path,
-            });
-          }
+          gameAssets.push(game.data[i]);
         }
-
+        let gameURl = game.data.filter((item: any) => item.name == entryFile);
         let gameData = {
           _id: getCookie("auth-id"),
           name: name,
@@ -98,8 +86,6 @@ const Add: React.FC<AddInterface> = () => {
           poster: posterData,
           game_assets: gameAssets,
         };
-
-        console.log("==> let ", gameData);
         await api({
           url: "/game/add",
           data: gameData,
@@ -145,7 +131,6 @@ const Add: React.FC<AddInterface> = () => {
     files.forEach((file: any) => {
       formData.append("files", file);
     });
-
     try {
       let response = await api({
         url: "/common/upload-game",

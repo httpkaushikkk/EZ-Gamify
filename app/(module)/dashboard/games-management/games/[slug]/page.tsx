@@ -88,6 +88,9 @@ const View: React.FC<ViewInterface> = ({ params }: any) => {
         ].path
       : "";
 
+      console.log(filepath);
+      
+
   return (
     <div className="px-5 pt-5">
       <div className="flex items-center justify-between my-4">
@@ -114,7 +117,9 @@ const View: React.FC<ViewInterface> = ({ params }: any) => {
       <div className="max-w-[1650px] h-[580px] w-full m-auto py-3 px-4 relative group">
         <div
           style={{
-            backgroundImage: `url(${convertFilePathToURL(filepath)})`,
+            backgroundImage: `url(${convertFilePathToURL(
+              encodeURI(filepath)
+            )})`,
           }}
           className="w-full h-full rounded-2xl bg-center bg-cover duration-500"
         ></div>
