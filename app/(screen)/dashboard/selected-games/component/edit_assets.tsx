@@ -56,10 +56,10 @@ const EditAssets: React.FC<EditAssetsInterface> = ({
                         height={30}
                         className="m-2 w-24 h-48 object-contain"
                       />
-                      <div className="absolute top-0 right-0 left-0 bottom-0">
-                        {/* <Image src={edit} alt="edit" className="w-10 h-10" /> */}
+                      {/* <div className="absolute top-0 right-0 left-0 bottom-0">
+                        <Image src={edit} alt="edit" className="w-10 h-10" />
                         <p>kaushik</p>
-                      </div>
+                      </div> */}
                     </div>
                     <input
                       type="file"
