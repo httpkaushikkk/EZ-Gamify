@@ -70,6 +70,7 @@ const Add: React.FC<AddInterface> = () => {
         for (let i = 0; i < poster.data.length; i++) {
           posterData.push({ path: poster.data[i].path });
         }
+
         let game = await handleGameuploder();
         let gameAssets: any = [];
         for (let i = 0; i < game.data.length; i++) {
@@ -178,6 +179,7 @@ const Add: React.FC<AddInterface> = () => {
           Authorization: `Bearer ${getCookie("auth-token")}`,
         },
       });
+      console.log("response", response);
       return response;
     } catch (err: any) {
       console.log(err);
