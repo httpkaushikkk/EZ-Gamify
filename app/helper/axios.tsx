@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Define image URL
 // export const imageURL = "http://192.168.29.43:8100/";
-export const imageURL = "https://storage.googleapis.com/";
+export const imageURL = "https://storage.googleapis.com/ez-gamify/";
 
 // Define your base URL for the API
 export const baseURL = "http://192.168.29.43:8100/v1/api";

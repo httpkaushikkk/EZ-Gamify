@@ -133,7 +133,7 @@ const View = ({ params }: { params: { slug: string[] } }) => {
             ? currentIndex
             : 0
         ].path
-      : "";
+      : "";      
 
   return (
     <React.Fragment>
@@ -172,7 +172,7 @@ const View = ({ params }: { params: { slug: string[] } }) => {
         <div className="max-w-[1650px] h-[580px] w-full m-auto py-3 px-4 relative group">
           <div
             style={{
-              backgroundImage: `url(${convertFilePathToURL(filepath)})`,
+              backgroundImage: `url(${filepath})`,
             }}
             className="w-full h-full rounded-2xl bg-center bg-cover duration-500"
           ></div>

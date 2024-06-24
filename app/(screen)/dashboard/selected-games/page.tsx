@@ -34,7 +34,6 @@ const BoughtGames: React.FC<BoughtGamesIntreface> = () => {
       console.log(err);
     }
   };
-  
 
   return (
     <React.Fragment>
