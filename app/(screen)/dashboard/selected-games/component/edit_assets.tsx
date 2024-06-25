@@ -45,18 +45,22 @@ const EditAssets: React.FC<EditAssetsInterface> = ({
 
   const fetchSelectedImage = (event: any) => {
     const file = event.target.files[0];
-    setnewAssets([...newAssets, file]);
+    if (selectImage.path.split("/").pop() == file.name) {
+      setnewAssets([...newAssets, file]);
 
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        let data = {
-          url: reader.result,
-          name: selectImage.name,
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          let data = {
+            url: reader.result,
+            name: selectImage.path.split("/").pop(),
+          };
+          setSelectedAssets([...selectedAssets, data]);
         };
-        setSelectedAssets([...selectedAssets, data]);
-      };
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
+      }
+    } else {
+      toast.error("asset's name is not same.");
     }
   };
 
@@ -68,7 +72,6 @@ const EditAssets: React.FC<EditAssetsInterface> = ({
       formData.append("folder", "flippy");
       newAssets.forEach((file: any) => {
         formData.append("filess", file);
-        console.log(file);
       });
 
       const data = await api({
@@ -79,8 +82,7 @@ const EditAssets: React.FC<EditAssetsInterface> = ({
           Authorization: `Bearer ${getCookie("auth-token")}`,
         },
       });
-      console.log(data);
-      // handleClose();
+      handleClose();
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -102,17 +104,20 @@ const EditAssets: React.FC<EditAssetsInterface> = ({
         <DialogContentText id="alert-dialog-description">
           <div className="grid grid-cols-4 gap-2 relative">
             {data &&
-              data.game_assets &&
-              data.game_assets.length != 0 &&
-              data.game_assets.map((item: any, index: number) => {
+              data.length != 0 &&
+              data.map((item: any, index: number) => {
+                const allowedExtensionsRegex = /\.(jpg|jpeg|png|gif)$/;
                 return (
                   <div className="relative">
                     <React.Fragment key={index}>
                       {selectedAssets.length != 0 &&
                         selectedAssets.map((el: any) => {
+                          console.log("==> ", el);
+                          console.log("re ==> ", item.path.split("/").pop());
+
                           return (
                             <React.Fragment>
-                              {el.name == item.name && (
+                              {el.name == item.path.split("/").pop() && (
                                 <div
                                   className="z-50 cursor-pointer w-12 h-12 flex items-center justify-center absolute right-0 border-2 rounded-full p-1"
                                   onClick={() => alert("hello")}
@@ -128,7 +133,9 @@ const EditAssets: React.FC<EditAssetsInterface> = ({
                           );
                         })}
                       <React.Fragment>
-                        {allowedMimeTypes.includes(item.mimetype) && (
+                        {allowedExtensionsRegex.test(
+                          item.path.split("/").pop()
+                        ) && (
                           <a href={void 0}>
                             <div className="relative">
                               <img
@@ -139,7 +146,7 @@ const EditAssets: React.FC<EditAssetsInterface> = ({
                                 className="m-2 w-24 h-44 object-contain"
                                 onClick={() => handleClick(item)}
                               />
-                              <p>{item.name}</p>
+                              <p>{item.path.split("/").pop()}</p>
                             </div>
                           </a>
                         )}

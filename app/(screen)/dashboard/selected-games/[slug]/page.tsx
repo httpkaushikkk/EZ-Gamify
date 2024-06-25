@@ -26,12 +26,36 @@ const View = ({ params }: { params: { slug: string[] } }) => {
   let [openEdit, setOpenEdit] = useState<boolean>(false);
   let [linkModal, setLinkModal] = useState<boolean>(false);
   let [isConfirmation, setConfirmation] = useState<boolean>(false);
+  let [gameAssets, setGameAssets] = useState<any>([]);
 
   useEffect(() => {
     fetchGames();
     fetchUser();
     fetchUrl();
+    fetchselectedGames();
   }, []);
+
+  const fetchselectedGames = async () => {
+    try {
+      const data = await api({
+        url: "/game/fetch-select-game",
+        data: { game_id: slug, user_id: getCookie("auth-id") },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getCookie("auth-token")}`,
+        },
+      });
+      if (data.hasOwnProperty("response")) {
+        if (data.response.hasOwnProperty("custom_assets")) {
+          setGameAssets(data.response.custom_assets)
+        }
+      }
+    } catch (err: any) {
+      console.log(err);
+      
+      // toast.error(err.response.data.message);
+    }
+  };
 
   const fetchGames = async () => {
     try {
@@ -198,8 +222,6 @@ const View = ({ params }: { params: { slug: string[] } }) => {
       });
   };
 
-  console.log(game);
-
   return (
     <React.Fragment>
       <div className="p-5">
@@ -305,7 +327,7 @@ const View = ({ params }: { params: { slug: string[] } }) => {
       <EditAssets
         open={openEdit}
         handleClose={() => setOpenEdit(false)}
-        data={game}
+        data={gameAssets}
       />
     </React.Fragment>
   );
