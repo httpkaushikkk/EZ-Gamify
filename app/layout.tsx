@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
+import StoreProvider from "./storeProvider";
+import Loader from "./components/dashboard/loader";
 
 const inter = Outfit({ subsets: ["latin"] });
 
@@ -17,14 +19,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <AppRouterCacheProvider options={{ key: "css" }}>
-          {children}
-          <Toaster />
-        </AppRouterCacheProvider>
-      </body>
-    </html>
+    <StoreProvider>
+      <html lang="en">
+        <body className={inter.className}>
+          <AppRouterCacheProvider options={{ key: "css" }}>
+            {children}
+            <Toaster />
+          </AppRouterCacheProvider>
+          <Loader />
+        </body>
+      </html>
+    </StoreProvider>
   );
 }
 

@@ -6,12 +6,15 @@ import toast from "react-hot-toast";
 import plusIcon from "@/app/assets/svg/plus.svg";
 import editIcon from "@/app/assets/svg/edit.svg";
 import Image from "next/image";
+import { useDispatch } from "react-redux";
+import { hideLoader, showLoader } from "@/app/store/loader/loaderSlice";
 
 interface ProfileInterface {}
 
 const Profile: React.FC<ProfileInterface> = () => {
   const fileInputRef: any = useRef(null);
   const fileInputEditRef: any = useRef(null);
+  let dispatch = useDispatch();
   let [name, setName] = useState<string>("");
   let [email, setEmail] = useState<string>("");
   let [mobile, setMobile] = useState<string>("");
@@ -30,6 +33,7 @@ const Profile: React.FC<ProfileInterface> = () => {
   };
 
   const fetchProfile = async () => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/user/fetch",
@@ -42,13 +46,16 @@ const Profile: React.FC<ProfileInterface> = () => {
       if (data.hasOwnProperty("response")) {
         setUserData(data.response);
         onChangeState(data.response);
+        dispatch(hideLoader());
       }
     } catch (err: any) {
+      dispatch(hideLoader());
       toast.error(err.response.data.message);
     }
   };
 
   const editProfile = async () => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/user/edit",
@@ -66,13 +73,16 @@ const Profile: React.FC<ProfileInterface> = () => {
       if (data.hasOwnProperty("message")) {
         toast.success(data.message);
         fetchProfile();
+        dispatch(hideLoader());
       }
     } catch (err: any) {
       toast.error(err.response.data.message);
+      dispatch(hideLoader());
     }
   };
 
   const editProfileImage = async (profile: any) => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/user/edit",
@@ -88,9 +98,11 @@ const Profile: React.FC<ProfileInterface> = () => {
       if (data.hasOwnProperty("message")) {
         toast.success(data.message);
         fetchProfile();
+        dispatch(hideLoader());
       }
     } catch (err: any) {
       toast.error(err.response.data.message);
+      dispatch(hideLoader());
     }
   };
 
@@ -101,6 +113,7 @@ const Profile: React.FC<ProfileInterface> = () => {
   const handleFileChange = async (e: any) => {
     const selectedFile = e.target.files[0];
     const url = URL.createObjectURL(selectedFile);
+    dispatch(showLoader());
     try {
       const formData: any = new FormData();
       formData.append("_id", getCookie("auth-id"));
@@ -121,8 +134,10 @@ const Profile: React.FC<ProfileInterface> = () => {
       if (data.hasOwnProperty("message")) {
         toast.success(data.message);
       }
+      dispatch(hideLoader());
     } catch (err: any) {
       toast.error(err.response.data.message);
+      dispatch(hideLoader());
     }
   };
 
@@ -132,7 +147,7 @@ const Profile: React.FC<ProfileInterface> = () => {
         <p className="font-medium tracking-wide text-primary-darken text-2xl">
           Profile
         </p>
-        <div className="flex">
+        <div className="md:flex">
           <div className="mt-5">
             {userData.profile_img ? (
               <div className="w-64 h-64 relative border-[1px] border-primary-darken border-dashed flex items-center justify-center">
@@ -172,12 +187,12 @@ const Profile: React.FC<ProfileInterface> = () => {
               </a>
             )}
           </div>
-          <div className="ml-8 mt-4 grid grid-cols-2 gap-12">
+          <div className="md:ml-8 mt-6 md:mt-4 grid grid-cols-2 gap-12">
             <div>
               <p>Username</p>
               <input
                 type="text"
-                className="w-96 h-10 text-lg tracking-wide border-b-[1px] border-primary-darken/50 focus:outline-none"
+                className="w-full h-10 text-lg tracking-wide border-b-[1px] border-primary-darken/50 focus:outline-none"
                 value={username}
                 onChange={(e) => setUserName(e.target.value)}
                 onBlur={editProfile}
@@ -187,7 +202,7 @@ const Profile: React.FC<ProfileInterface> = () => {
               <p>Name</p>
               <input
                 type="text"
-                className="w-96 h-10 text-lg tracking-wide border-b-[1px] border-primary-darken/50 focus:outline-none"
+                className="w-full h-10 text-lg tracking-wide border-b-[1px] border-primary-darken/50 focus:outline-none"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 onBlur={editProfile}
@@ -197,7 +212,7 @@ const Profile: React.FC<ProfileInterface> = () => {
               <p>Mobile No.</p>
               <input
                 type="text"
-                className="w-96 h-10 text-lg tracking-wide border-b-[1px] border-primary-darken/50 focus:outline-none"
+                className="w-full h-10 text-lg tracking-wide border-b-[1px] border-primary-darken/50 focus:outline-none"
                 value={mobile}
                 onChange={(e) => setMobile(e.target.value)}
                 onBlur={editProfile}
@@ -207,7 +222,7 @@ const Profile: React.FC<ProfileInterface> = () => {
               <p>Email ID</p>
               <input
                 type="text"
-                className="w-96 h-10 text-lg tracking-wide border-b-[1px] border-primary-darken/50 focus:outline-none"
+                className="w-full h-10 text-lg tracking-wide border-b-[1px] border-primary-darken/50 focus:outline-none"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={editProfile}

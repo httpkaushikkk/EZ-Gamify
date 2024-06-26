@@ -17,12 +17,14 @@ interface EditAssetsInterface {
   open: boolean;
   handleClose: any;
   data: any;
+  fetchselectedGames: any;
 }
 
 const EditAssets: React.FC<EditAssetsInterface> = ({
   open,
   handleClose,
   data,
+  fetchselectedGames,
 }) => {
   const theme = useTheme();
   const fileInputRef: any = React.useRef(null);
@@ -34,9 +36,18 @@ const EditAssets: React.FC<EditAssetsInterface> = ({
     "image/jpg",
   ];
 
-  const [selectImage, setselectImage] = React.useState<any>({});
-  const [selectedAssets, setSelectedAssets] = React.useState<any>([]);
-  const [newAssets, setnewAssets] = React.useState<any>([]);
+  let [selectImage, setselectImage] = React.useState<any>({});
+  let [selectedAssets, setSelectedAssets] = React.useState<any>([]);
+  let [newAssets, setnewAssets] = React.useState<any>([]);
+
+  const clearState = () => {
+    selectImage = {};
+    selectedAssets = [];
+    newAssets = [];
+    setselectImage(selectImage);
+    setSelectedAssets(selectedAssets);
+    setnewAssets(newAssets);
+  };
 
   const handleClick = (item: any) => {
     setselectImage(item);
@@ -82,7 +93,13 @@ const EditAssets: React.FC<EditAssetsInterface> = ({
           Authorization: `Bearer ${getCookie("auth-token")}`,
         },
       });
-      handleClose();
+      if (data.hasOwnProperty("message")) {
+        clearState();
+        toast.success(data.message);
+        setTimeout(() => {
+          fetchselectedGames();
+        }, 300);
+      }
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -96,10 +113,10 @@ const EditAssets: React.FC<EditAssetsInterface> = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">Edit Game's Assets</DialogTitle>
+      <DialogTitle id="alert-dialog-title">{"Edit Game's Assets"}</DialogTitle>
       <DialogContent>
         <p className="mb-4">
-          Replace your own assets but make sure assest's name are same.
+          {"Replace your own assets but make sure assest's name are same."}
         </p>
         <DialogContentText id="alert-dialog-description">
           <div className="grid grid-cols-4 gap-2 relative">
@@ -108,15 +125,15 @@ const EditAssets: React.FC<EditAssetsInterface> = ({
               data.map((item: any, index: number) => {
                 const allowedExtensionsRegex = /\.(jpg|jpeg|png|gif)$/;
                 return (
-                  <div className="relative">
+                  <div key={index} className="relative">
                     <React.Fragment key={index}>
                       {selectedAssets.length != 0 &&
-                        selectedAssets.map((el: any) => {
+                        selectedAssets.map((el: any, elindex: number) => {
                           console.log("==> ", el);
                           console.log("re ==> ", item.path.split("/").pop());
 
                           return (
-                            <React.Fragment>
+                            <React.Fragment key={elindex}>
                               {el.name == item.path.split("/").pop() && (
                                 <div
                                   className="z-50 cursor-pointer w-12 h-12 flex items-center justify-center absolute right-0 border-2 rounded-full p-1"

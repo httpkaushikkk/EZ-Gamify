@@ -4,11 +4,15 @@ import { getCookie } from "cookies-next";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { hideLoader, showLoader } from "@/app/store/loader/loaderSlice";
+import toast from "react-hot-toast";
 
 interface BoughtGamesIntreface {}
 
 const BoughtGames: React.FC<BoughtGamesIntreface> = () => {
   const route = useRouter();
+  let dispatch = useDispatch();
   let [games, setGames] = useState<any>([]);
 
   useEffect(() => {
@@ -16,6 +20,7 @@ const BoughtGames: React.FC<BoughtGamesIntreface> = () => {
   }, []);
 
   const fetchGames = async () => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/user/fetch",
@@ -28,18 +33,23 @@ const BoughtGames: React.FC<BoughtGamesIntreface> = () => {
       if (data.hasOwnProperty("response")) {
         if (data.response.hasOwnProperty("games")) {
           setGames(data.response.games);
+          dispatch(hideLoader());
         }
       }
     } catch (err: any) {
-      console.log(err);
+      dispatch(hideLoader());
+      toast.error(err.response.data.message);
     }
   };
 
   return (
     <React.Fragment>
       <div className="w-full h-screen bg-primary-extraLight">
-        {games && games.length != 0 ? (
-          <div className="m-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3">
+        <p className="p-5 font-bold tracking-wide text-primary-darken">
+          Selected Games
+        </p>
+        {games && games.length != 0 && (
+          <div className="mx-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3">
             {games.map((item: any, index: number) => {
               return (
                 <div
@@ -59,10 +69,6 @@ const BoughtGames: React.FC<BoughtGamesIntreface> = () => {
                 </div>
               );
             })}
-          </div>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <p>No Data</p>
           </div>
         )}
       </div>

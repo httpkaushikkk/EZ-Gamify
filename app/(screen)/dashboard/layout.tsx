@@ -1,3 +1,4 @@
+import Loader from "@/app/components/dashboard/loader";
 import Navbar from "@/app/components/dashboard/navbar";
 import SideBar from "@/app/components/dashboard/sidebar";
 

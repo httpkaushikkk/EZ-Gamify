@@ -47,6 +47,8 @@ const Register: React.FC<RegisterInterface> = () => {
             headers: {},
           });
           if (data.status == 1) {
+            setLoading(false);
+            handleReset();
             toast.success(data.message);
           }
         } catch (err: any) {
@@ -56,6 +58,10 @@ const Register: React.FC<RegisterInterface> = () => {
       }
     },
   });
+
+  const handleReset = () => {
+    formik.resetForm();
+  };
 
   function hasWord(userInput: string) {
     const trimmedInput = userInput.trim();

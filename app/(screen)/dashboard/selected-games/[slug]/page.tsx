@@ -12,11 +12,14 @@ import Confirmation from "@/app/components/dashboard/modals/confirmation";
 import LinkGenerate from "@/app/components/dashboard/modals/link";
 import CopyIcon from "@/app/assets/svg/copy.svg";
 import EditAssets from "../component/edit_assets";
+import { useDispatch } from "react-redux";
+import { hideLoader, showLoader } from "@/app/store/loader/loaderSlice";
 
 interface ViewInterface {}
 
 const View = ({ params }: { params: { slug: string[] } }) => {
   const { slug } = params;
+  let dispatch = useDispatch();
   let [game, setGame] = useState<any>({});
   let [user, setUser] = useState<any>({});
   let [URL, setURL] = useState<string>("");
@@ -36,6 +39,7 @@ const View = ({ params }: { params: { slug: string[] } }) => {
   }, []);
 
   const fetchselectedGames = async () => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/game/fetch-select-game",
@@ -47,17 +51,19 @@ const View = ({ params }: { params: { slug: string[] } }) => {
       });
       if (data.hasOwnProperty("response")) {
         if (data.response.hasOwnProperty("custom_assets")) {
-          setGameAssets(data.response.custom_assets)
+          setGameAssets(data.response.custom_assets);
+          setOpenEdit(false);
+          dispatch(hideLoader());
         }
       }
     } catch (err: any) {
-      console.log(err);
-      
+      dispatch(hideLoader());
       // toast.error(err.response.data.message);
     }
   };
 
   const fetchGames = async () => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/game/fetch",
@@ -69,13 +75,16 @@ const View = ({ params }: { params: { slug: string[] } }) => {
       });
       if (data.hasOwnProperty("response")) {
         setGame(data.response);
+        dispatch(hideLoader());
       }
     } catch (err: any) {
+      dispatch(hideLoader());
       toast.error(err.response.data.message);
     }
   };
 
   const fetchUser = async () => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/user/fetch",
@@ -89,8 +98,10 @@ const View = ({ params }: { params: { slug: string[] } }) => {
         setUser(data.response);
         let ids = data.response.active_games.map((item: any) => item._id);
         setGameIDs(ids);
+        dispatch(hideLoader());
       }
     } catch (err: any) {
+      dispatch(hideLoader());
       toast.error(err.response.data.message);
     }
   };
@@ -98,6 +109,7 @@ const View = ({ params }: { params: { slug: string[] } }) => {
   const editGameAssets = async () => {};
 
   const generateURL = async () => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/generate-link",
@@ -111,13 +123,16 @@ const View = ({ params }: { params: { slug: string[] } }) => {
         setURL(data.url);
         fetchUser();
         fetchUrl();
+        dispatch(hideLoader());
       }
     } catch (err: any) {
+      dispatch(hideLoader());
       toast.error(err.response.data.message);
     }
   };
 
   const fetchUrl = async () => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/game/active/fetch",
@@ -129,13 +144,16 @@ const View = ({ params }: { params: { slug: string[] } }) => {
       });
       if (data.hasOwnProperty("response")) {
         setActiveURL(data.response);
+        dispatch(hideLoader());
       }
     } catch (err: any) {
+      dispatch(hideLoader());
       // toast.error(err.response.data.message);
     }
   };
 
   const editGameUrl = async () => {
+    dispatch(showLoader());
     const obj = {
       _id: activeURL._id,
       user_id: getCookie("auth-id"),
@@ -154,8 +172,10 @@ const View = ({ params }: { params: { slug: string[] } }) => {
       if (data.hasOwnProperty("message")) {
         toast.success(data.message);
         fetchUrl();
+        dispatch(hideLoader());
       }
     } catch (err: any) {
+      dispatch(hideLoader());
       toast.error(err.response.data.message);
     }
   };
@@ -222,6 +242,9 @@ const View = ({ params }: { params: { slug: string[] } }) => {
       });
   };
 
+  console.log(gameAssets);
+  
+
   return (
     <React.Fragment>
       <div className="p-5">
@@ -249,11 +272,13 @@ const View = ({ params }: { params: { slug: string[] } }) => {
                 onClick={() => setConfirmation(true)}
               />
             )}
-            <PlayButton
-              dataText="Edit Game"
-              dataTitle="Edit Game"
-              onClick={() => setOpenEdit(true)}
-            />
+            {gameIDs && gameIDs.length !== 0 && gameIDs.includes(slug) ? (
+              <PlayButton
+                dataText="Edit Game"
+                dataTitle="Edit Game"
+                onClick={() => setOpenEdit(true)}
+              />
+            ) : null}
           </div>
         </div>
         <div className="max-w-[1650px] h-[580px] w-full m-auto py-3 px-4 relative group">
@@ -328,6 +353,7 @@ const View = ({ params }: { params: { slug: string[] } }) => {
         open={openEdit}
         handleClose={() => setOpenEdit(false)}
         data={gameAssets}
+        fetchselectedGames={fetchselectedGames}
       />
     </React.Fragment>
   );

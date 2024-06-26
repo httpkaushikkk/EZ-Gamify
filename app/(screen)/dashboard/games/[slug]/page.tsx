@@ -9,11 +9,14 @@ import rightArrow from "../../../../assets/svg/right.svg";
 import PlayButton from "@/app/components/dashboard/buttons/play_button";
 import { convertFilePathToURL } from "@/app/helper/convertFilePathToURL";
 import Confirmation from "@/app/components/dashboard/modals/confirmation";
+import { useDispatch } from "react-redux";
+import { hideLoader, showLoader } from "@/app/store/loader/loaderSlice";
 
 interface ViewInterface {}
 
 const View = ({ params }: { params: { slug: string[] } }) => {
   const { slug } = params;
+  let dispatch = useDispatch();
   let [game, setGame] = useState<any>({});
   let [currentIndex, setCurrentIndex] = useState(0);
   let [activeGame, setActiveGame] = useState<any>([]);
@@ -25,6 +28,7 @@ const View = ({ params }: { params: { slug: string[] } }) => {
   }, []);
 
   const fetchGames = async () => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/game/fetch",
@@ -36,13 +40,16 @@ const View = ({ params }: { params: { slug: string[] } }) => {
       });
       if (data.hasOwnProperty("response")) {
         setGame(data.response);
+        dispatch(hideLoader());
       }
     } catch (err: any) {
+      dispatch(hideLoader());
       toast.error(err.response.data.message);
     }
   };
 
   const fetchUser = async () => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/user/fetch",
@@ -58,14 +65,17 @@ const View = ({ params }: { params: { slug: string[] } }) => {
           activeGamesId.push(data.response.active_games[i]._id);
         }
         setActiveGame(activeGamesId);
+        dispatch(hideLoader());
       }
     } catch (err: any) {
       toast.error(err.response.data.message);
+      dispatch(hideLoader());
     }
   };
 
   const selectGame = async () => {
     setConfirmation(false);
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/user/edit",
@@ -77,8 +87,10 @@ const View = ({ params }: { params: { slug: string[] } }) => {
       });
       if (data.hasOwnProperty("message")) {
         toast.success(data.message);
+        dispatch(hideLoader());
       }
     } catch (err: any) {
+      dispatch(hideLoader());
       toast.error(err.response.data.message);
     }
   };
@@ -133,7 +145,7 @@ const View = ({ params }: { params: { slug: string[] } }) => {
             ? currentIndex
             : 0
         ].path
-      : "";      
+      : "";
 
   return (
     <React.Fragment>

@@ -36,8 +36,6 @@ const Login: React.FC<LoginInterface> = () => {
           data: values,
           headers: {},
         });
-        console.log(data);
-
         if (data.status == 1) {
           setCookie("auth-token", data.data.token);
           setCookie("auth-id", data.data.user._id);
@@ -48,7 +46,11 @@ const Login: React.FC<LoginInterface> = () => {
         setLoading(false);
       } catch (err: any) {
         setLoading(false);
-        toast.error(err.response.data.message);
+        if (err.response.data.hasOwnProperty("message")) {
+          toast.error(err.response.data.message);
+        } else if (err.response.data.hasOwnProperty("error")) {
+          toast.error(err.response.data.error);
+        }
       }
     },
   });

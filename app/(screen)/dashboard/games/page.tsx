@@ -5,11 +5,14 @@ import { getCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import api, { imageURL } from "@/app/helper/axios";
+import { useDispatch } from "react-redux";
+import { hideLoader, showLoader } from "@/app/store/loader/loaderSlice";
 
 interface GameInterface {}
 
 const Game: React.FC<GameInterface> = () => {
   const route = useRouter();
+  let dispatch = useDispatch();
   let [liveGame, setLiveGame] = useState<any>([]);
   let [reviewGames, setReviewGames] = useState<any>([]);
   let [gamesType, setGamesType] = useState<any>("live");
@@ -19,6 +22,7 @@ const Game: React.FC<GameInterface> = () => {
   }, []);
 
   const fetchGames = async () => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/game/fetch-all",
@@ -40,8 +44,10 @@ const Game: React.FC<GameInterface> = () => {
         }
         setLiveGame(liveGames);
         setReviewGames(underReviewGames);
+        dispatch(hideLoader());
       }
     } catch (err: any) {
+      dispatch(hideLoader());
       toast.error(err.response.data.message);
     }
   };
@@ -84,7 +90,7 @@ const Game: React.FC<GameInterface> = () => {
       <React.Fragment>
         {gamesType == "live" ? (
           <React.Fragment>
-            {liveGame && liveGame.length != 0 ? (
+            {liveGame && liveGame.length != 0 && (
               <div className="mx-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3">
                 {liveGame.map((item: any, index: number) => {              
 
@@ -105,15 +111,11 @@ const Game: React.FC<GameInterface> = () => {
                   );
                 })}
               </div>
-            ) : (
-              <div className="w-full h-96 flex items-center justify-center">
-                <p>No Data</p>
-              </div>
             )}
           </React.Fragment>
         ) : (
           <React.Fragment>
-            {reviewGames && reviewGames.length != 0 ? (
+            {reviewGames && reviewGames.length != 0 && (
               <div className="mx-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3">
                 {reviewGames.map((item: any, index: number) => {
                   return (
@@ -132,10 +134,6 @@ const Game: React.FC<GameInterface> = () => {
                     </div>
                   );
                 })}
-              </div>
-            ) : (
-              <div className="w-full h-96 flex items-center justify-center">
-                <p>No Data</p>
               </div>
             )}
           </React.Fragment>

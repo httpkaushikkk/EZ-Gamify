@@ -11,10 +11,13 @@ import Image from "next/image";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import excelIcon from "@/app/assets/svg/excel.svg";
+import { useDispatch } from "react-redux";
+import { hideLoader, showLoader } from "@/app/store/loader/loaderSlice";
 
 interface WalletInterface {}
 
 const Wallet: React.FC<WalletInterface> = () => {
+  let dispatch = useDispatch();
   let [graphData, setGraphData] = useState<any>([]);
   let [walletData, setWalletData] = useState<any>({});
   let [totalData, setTotalData] = useState<number>(0);
@@ -29,6 +32,7 @@ const Wallet: React.FC<WalletInterface> = () => {
   }, []);
 
   const fetchWallet = async () => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/wallet/fetch",
@@ -42,8 +46,10 @@ const Wallet: React.FC<WalletInterface> = () => {
         if (data.hasOwnProperty("response")) {
           setWalletData(data.response);
         }
+        dispatch(hideLoader());
       }
     } catch (err: any) {
+      dispatch(hideLoader());
       toast.error(err.response.data.message);
     }
   };
@@ -65,6 +71,7 @@ const Wallet: React.FC<WalletInterface> = () => {
   };
 
   const fetchTransection = async (page: any) => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/transaction/fetch-all",
@@ -105,13 +112,16 @@ const Wallet: React.FC<WalletInterface> = () => {
           { id: 1, value: debitDataValueSum, label: "Spend on games" },
         ];
         setGraphData(graphDataMap);
+        dispatch(hideLoader());
       }
     } catch (err: any) {
       toast.error(err.response.data.message);
+      dispatch(hideLoader());
     }
   };
 
   const downloadWExcel = async () => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/transaction/excel",
@@ -164,8 +174,10 @@ const Wallet: React.FC<WalletInterface> = () => {
           type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         });
         saveAs(excelBlob, "transections");
+        dispatch(hideLoader());
       }
     } catch (err: any) {
+      dispatch(hideLoader());
       toast.error(err.response.data.message);
     }
   };
@@ -177,6 +189,7 @@ const Wallet: React.FC<WalletInterface> = () => {
   }
 
   const makeRechargeWallet = async () => {
+    dispatch(showLoader());
     try {
       const data = await api({
         url: "/common/payment/order",
@@ -240,8 +253,10 @@ const Wallet: React.FC<WalletInterface> = () => {
             rzp1.open();
           }
         }
+        dispatch(hideLoader());
       }
     } catch (err: any) {
+      dispatch(hideLoader());
       toast.error(err.response.data.message);
     }
   };
@@ -249,7 +264,7 @@ const Wallet: React.FC<WalletInterface> = () => {
   const blanceData = ["100", "500", "1000", "2500", "5000"];
 
   return (
-    <div className="">
+    <div className="w-full bg-primary-extraLight">
       <Script src="https://checkout.razorpay.com/v1/checkout.js"></Script>
       {/* Recharger */}
       <div className="p-5">
@@ -301,168 +316,148 @@ const Wallet: React.FC<WalletInterface> = () => {
                 );
               })}
             </div>
-            {/* {selectedAmount > 0 && (
-              <a
-                href={void 0}
-                onClick={makeRechargeWallet}
-                className="cursor-pointer"
-              >
-                <div className="border-2 px-5 py-2 mt-8 rounded-xl">
-                  <p>Rechrage</p>
+          </div>
+        </div>
+        {transection && transection.length != 0 ? (
+          <React.Fragment>
+            <div className="w-full mt-5">
+              <div className="flex items-center">
+                <p className="text-2xl tracking-wide font-medium text-black">
+                  Recent transactions
+                </p>
+                <a
+                  href={void 0}
+                  onClick={downloadWExcel}
+                  className="ml-5 cursor-pointer"
+                >
+                  <Image src={excelIcon} alt="" className="" />
+                </a>
+              </div>
+              <div className="mt-3">
+                <div className="overflow-x-scroll">
+                  <table className="border-[1px] border-primary-darken/15 rounded-lg divide-black/15 dark:border-light-primary-white/15 table-auto min-w-full divide-y dark:divide-light-primary-white/15">
+                    <thead>
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
+                          #
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
+                          Date/Time
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
+                          Type
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
+                          Details
+                        </th>
+                        <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70 text-right">
+                          Amount
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide divide-black/10 dark:divide-light-primary-white/15">
+                      {transection &&
+                        transection.length != 0 &&
+                        transection.map((item: any, index: number) => {
+                          return (
+                            <tr
+                              key={index}
+                              className={`cursor-pointer ${
+                                item.is_debit ? "bg-red/15" : "bg-green/15"
+                              }`}
+                            >
+                              <td className="px-6 py-5 whitespace-nowrap">
+                                {index + 1}
+                              </td>
+                              <td className="px-6 py-5 whitespace-nowrap">
+                                {moment(item.createdAt).format(
+                                  "MMMM Do YYYY, h:mm:ss a"
+                                )}
+                              </td>
+                              <td className="px-6 py-5 whitespace-nowrap">
+                                {item.is_credit
+                                  ? "Recharge wallet"
+                                  : item.is_debit
+                                  ? "Spend on games"
+                                  : ""}
+                              </td>
+                              <td className="px-6 py-5 whitespace-nowrap">
+                                {item.is_debit && item.game.length != 0
+                                  ? item.game[0].name
+                                  : "-"}
+                              </td>
+                              <td className="px-6 py-5 whitespace-nowrap text-right">
+                                {item.amount} {item.currency[0].symbol}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
                 </div>
-              </a>
-            )} */}
-          </div>
-          <div className="w-[50rem] mt-12 xl:mt-0">
-            <div className="w-auto mt-5">
-              <PieChart
-                series={[
-                  {
-                    data: graphData,
-                    highlightScope: { faded: "global", highlighted: "item" },
-                    faded: {
-                      innerRadius: 30,
-                      additionalRadius: -30,
-                      color: "gray",
-                    },
-                  },
-                ]}
-                height={200}
-                colors={["#B1C9EF", "#395886"]}
-              />
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="w-full mt-5">
-          <div className="flex items-center">
-            <p className="text-2xl tracking-wide font-medium text-black">
-              Recent transactions
-            </p>
-            <a
-              href={void 0}
-              onClick={downloadWExcel}
-              className="ml-5 cursor-pointer"
-            >
-              <Image src={excelIcon} alt="" className="" />
-            </a>
-          </div>
-          <div className="mt-3">
-            <div className="overflow-x-auto">
-              <table className="border-[1px] border-primary-darken/15 rounded-lg divide-black/15 dark:border-light-primary-white/15 table-auto min-w-full divide-y dark:divide-light-primary-white/15">
-                <thead>
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
-                      #
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
-                      Date/Time
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
-                      Type
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70">
-                      Details
-                    </th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-light-primary-white/70 text-right">
-                      Amount
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide divide-black/10 dark:divide-light-primary-white/15">
-                  {transection &&
-                    transection.length != 0 &&
-                    transection.map((item: any, index: number) => {
-                      return (
-                        <tr
-                          key={index}
-                          className={`cursor-pointer ${
-                            item.is_debit ? "bg-red/15" : "bg-green/15"
-                          }`}
-                        >
-                          <td className="px-6 py-5 whitespace-nowrap">
-                            {index + 1}
-                          </td>
-                          <td className="px-6 py-5 whitespace-nowrap">
-                            {moment(item.createdAt).format(
-                              "MMMM Do YYYY, h:mm:ss a"
-                            )}
-                          </td>
-                          <td className="px-6 py-5 whitespace-nowrap">
-                            {item.is_credit
-                              ? "Recharge wallet"
-                              : item.is_debit
-                              ? "Spend on games"
-                              : ""}
-                          </td>
-                          <td className="px-6 py-5 whitespace-nowrap">
-                            {item.is_debit && item.game.length != 0
-                              ? item.game[0].name
-                              : "-"}
-                          </td>
-                          <td className="px-6 py-5 whitespace-nowrap text-right">
-                            {item.amount} {item.currency[0].symbol}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </table>
+            <div className="flex flex-col items-center mt-6">
+              <span className="text-sm text-gray-700">
+                Showing{" "}
+                <span className="font-semibold text-gray-900">
+                  {currentPage}
+                </span>{" "}
+                to{" "}
+                <span className="font-semibold text-gray-900">
+                  {totalPages}
+                </span>{" "}
+                of{" "}
+                <span className="font-semibold text-gray-900">{totalData}</span>{" "}
+                Entries
+              </span>
+              <div className="inline-flex mt-2 xs:mt-0">
+                <button
+                  onClick={prevData}
+                  className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-primary-darken rounded-s hover:bg-gray-900"
+                >
+                  <svg
+                    className="w-3.5 h-3.5 me-2 rtl:rotate-180"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 14 10"
+                  >
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 5H1m0 0 4 4M1 5l4-4"
+                    />
+                  </svg>
+                  Prev
+                </button>
+                <button
+                  onClick={nextData}
+                  className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-primary-darken border-0 border-s border-primary-extraLight rounded-e hover:bg-gray-900"
+                >
+                  Next
+                  <svg
+                    className="w-3.5 h-3.5 ms-2 rtl:rotate-180"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 14 10"
+                  >
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M1 5h12m0 0L9 1m4 4L9 9"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="flex flex-col items-center mt-6">
-          <span className="text-sm text-gray-700">
-            Showing{" "}
-            <span className="font-semibold text-gray-900">{currentPage}</span>{" "}
-            to <span className="font-semibold text-gray-900">{totalPages}</span>{" "}
-            of <span className="font-semibold text-gray-900">{totalData}</span>{" "}
-            Entries
-          </span>
-          <div className="inline-flex mt-2 xs:mt-0">
-            <button
-              onClick={prevData}
-              className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-primary-darken rounded-s hover:bg-gray-900"
-            >
-              <svg
-                className="w-3.5 h-3.5 me-2 rtl:rotate-180"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 14 10"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 5H1m0 0 4 4M1 5l4-4"
-                />
-              </svg>
-              Prev
-            </button>
-            <button
-              onClick={nextData}
-              className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-primary-darken border-0 border-s border-primary-extraLight rounded-e hover:bg-gray-900"
-            >
-              Next
-              <svg
-                className="w-3.5 h-3.5 ms-2 rtl:rotate-180"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 14 10"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M1 5h12m0 0L9 1m4 4L9 9"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
+          </React.Fragment>
+        ) : null}
       </div>
     </div>
   );
